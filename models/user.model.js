@@ -64,10 +64,17 @@ const User = sequelize.define(
     shoes: {
       type: DataTypes.STRING,
     },
-    // family: {
-    //   type: DataTypes.ARRAY(DataTypes.STRING),
-    //   defaultValue: [],
-    // },
+
+    family: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      get() {
+        return this.getDataValue("family").split(";");
+      },
+      set(val) {
+        this.setDataValue("family", val.join(";"));
+      },
+    },
     coach: {
       type: DataTypes.STRING,
     },
@@ -93,7 +100,7 @@ const User = sequelize.define(
 
 User.sync()
   .then((data) => {
-    console.log("Table and model synced!!");
+    console.log("User Table and model synced!!");
   })
   .catch((err) => {
     console.log("Error syncing table and model!!");
