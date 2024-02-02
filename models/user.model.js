@@ -67,7 +67,7 @@ const User = sequelize.define(
 
     family: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       get() {
         return this.getDataValue("family").split(";");
       },

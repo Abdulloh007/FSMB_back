@@ -68,8 +68,33 @@ async function loginUser(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+async function getMe(req , res){
+  try {
+    const user = req.user;
 
+    
+    const userData = await User.findOne({ where: { id: user.id } });
+
+    
+    res.status(200).json({ user:userData });
+  } catch (error) {
+    
+  }
+}
+async function deleteProfile(req, res) {
+  try {
+    const user = req.user;
+
+    await User.destroy({ where: { id: user.id } });
+
+    res.status(200).json({ msg: "Профиль успешно удален" });
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+}
 module.exports = {
   createUser,
   loginUser,
+  getMe,
+  deleteProfile
 };
