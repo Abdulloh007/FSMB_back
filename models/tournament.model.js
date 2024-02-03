@@ -57,12 +57,12 @@ const Tournament = sequelize.define("tournaments", {
   },
 });
 
-Tournament.sync()
-  .then((data) => {
-    console.log("Tournaments Table and model synced!!");
-  })
-  .catch((err) => {
-    console.log("Error syncing table and model!!");
-  });
+// Tournament.sync()
+//   .then((data) => {
+//     console.log("Tournaments Table and model synced!!");
+//   })
+//   .catch((err) => {
+//     console.log("Error syncing table and model!!");
+//   });
 
 module.exports = Tournament;

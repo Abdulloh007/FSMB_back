@@ -1,6 +1,14 @@
 const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
-
+const UserRoleEnum = [
+  "admin",
+  "athlet",
+  "manager",
+  "guest",
+  "judge",
+  "clubHead",
+  "parent",
+];
 const User = sequelize.define(
   "users",
   {
@@ -87,23 +95,31 @@ const User = sequelize.define(
     rating: {
       type: DataTypes.INTEGER,
     },
-    // role: {
-    //   type: DataTypes.ARRAY(DataTypes.STRING),
-
-    //   defaultValue: [],
-    // },
+    roles: {
+      type: DataTypes.ENUM(UserRoleEnum),
+      defaultValue: "guest",
+      allowNull: true,
+      get() {
+        return this.getDataValue("roles")
+          ? this.getDataValue("roles").split(";")
+          : [];
+      },
+      set(val) {
+        this.setDataValue("roles", val ? val.join(";") : null);
+      },
+    },
   },
   {
     timestamps: false,
   }
 );
 
-User.sync()
-  .then((data) => {
-    console.log("User Table and model synced!!");
-  })
-  .catch((err) => {
-    console.log("Error syncing table and model!!");
-  });
+// User.sync()
+//   .then((data) => {
+//     console.log("User Table and model synced!!");
+//   })
+//   .catch((err) => {
+//     console.log("Error syncing table and model!!");
+//   });
 
 module.exports = User;

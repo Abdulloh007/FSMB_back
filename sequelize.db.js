@@ -20,4 +20,12 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
-module.exports = {sequelize};
+sequelize
+  .sync()
+  .then(() => {
+    console.log("All tables and models synced!!");
+  })
+  .catch((err) => {
+    console.log("Error syncing tables and models!!");
+  });
+module.exports = { sequelize };

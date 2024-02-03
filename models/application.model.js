@@ -31,19 +31,18 @@ const Application = sequelize.define("applications", {
   status: {
     type: DataTypes.ENUM("pending", "approved", "rejected"),
     allowNull: false,
-    defaultValue: "pending", 
+    defaultValue: "pending",
   },
 });
 
 Tournament.hasMany(Application, { foreignKey: "tournamentId" });
 Application.belongsTo(Tournament, { foreignKey: "tournamentId" });
 
-
-Application.sync()
-  .then((data) => {
-    console.log("Applications Table and model synced!!");
-  })
-  .catch((err) => {
-    console.log("Error syncing table and model!!");
-  });
-module.exports = Application
+// Application.sync()
+//   .then((data) => {
+//     console.log("Applications Table and model synced!!");
+//   })
+//   .catch((err) => {
+//     console.log("Error syncing table and model!!");
+//   });
+module.exports = Application;
