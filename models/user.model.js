@@ -1,5 +1,6 @@
 const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
+const UserRole = require("./role.model");
 const UserRoleEnum = [
   "admin",
   "athlet",
@@ -54,35 +55,6 @@ const User = sequelize.define(
     age: {
       type: DataTypes.INTEGER,
     },
-    weight: {
-      type: DataTypes.FLOAT,
-    },
-    height: {
-      type: DataTypes.FLOAT,
-    },
-    head: {
-      type: DataTypes.STRING,
-    },
-    helmet: {
-      type: DataTypes.STRING,
-    },
-    armor: {
-      type: DataTypes.STRING,
-    },
-    shoes: {
-      type: DataTypes.STRING,
-    },
-
-    family: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      get() {
-        return this.getDataValue("family").split(";");
-      },
-      set(val) {
-        this.setDataValue("family", val.join(";"));
-      },
-    },
     coach: {
       type: DataTypes.STRING,
     },
@@ -90,36 +62,18 @@ const User = sequelize.define(
       type: DataTypes.STRING,
     },
     gender: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("male", "female"),
     },
     rating: {
       type: DataTypes.INTEGER,
     },
-    roles: {
-      type: DataTypes.ENUM(UserRoleEnum),
-      defaultValue: "guest",
-      allowNull: true,
-      get() {
-        return this.getDataValue("roles")
-          ? this.getDataValue("roles").split(";")
-          : [];
-      },
-      set(val) {
-        this.setDataValue("roles", val ? val.join(";") : null);
-      },
-    },
   },
   {
-    timestamps: false,
+    timestamps: true,
   }
 );
 
-// User.sync()
-//   .then((data) => {
-//     console.log("User Table and model synced!!");
-//   })
-//   .catch((err) => {
-//     console.log("Error syncing table and model!!");
-//   });
+User.hasMany(UserRole, { foreignKey: "userId" });
+UserRole.belongsTo(User, { foreignKey: "userId" });
 
 module.exports = User;

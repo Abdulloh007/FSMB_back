@@ -2,6 +2,8 @@ const { Op } = require("sequelize");
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
+const UserRole = require("../models/role.model");
+const Anthropometry = require("../models/anthropometry.model");
 
 async function createUser(req, res) {
   try {
@@ -41,7 +43,12 @@ async function createUser(req, res) {
       phone,
       password: hashedPassword,
     });
-
+    const userRole = await UserRole.create({
+      userId: newUser.id,
+    });
+    const newAnthropometry = await Anthropometry.create({
+      userId: newUser.id,
+    });
     res.status(201).json({ msg: "Пользователь успешно создан!" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
@@ -61,25 +68,21 @@ async function loginUser(req, res) {
     if (!isPasswordMatch) {
       return res.status(401).json({ msg: "Неверный пароль" });
     }
-    const token = generateToken(user);
+    const token = await generateToken(user);
 
     res.status(200).json({ token, msg: "Успешный вход в систему" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
 }
-async function getMe(req , res){
+async function getMe(req, res) {
   try {
     const user = req.user;
 
-    
     const userData = await User.findOne({ where: { id: user.id } });
 
-    
-    res.status(200).json({ user:userData });
-  } catch (error) {
-    
-  }
+    res.status(200).json({ user: userData });
+  } catch (error) {}
 }
 async function deleteProfile(req, res) {
   try {
@@ -96,5 +99,5 @@ module.exports = {
   createUser,
   loginUser,
   getMe,
-  deleteProfile
+  deleteProfile,
 };

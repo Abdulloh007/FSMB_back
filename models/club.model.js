@@ -1,5 +1,6 @@
 const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
+const User = require("./user.model");
 
 const Club = sequelize.define(
   "clubs",
@@ -31,7 +32,7 @@ const Club = sequelize.define(
       allowNull: false,
     },
     owner: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     description: {
@@ -39,7 +40,7 @@ const Club = sequelize.define(
       allowNull: false,
     },
     membersAge: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("children", "adults", "teenagers"),
       allowNull: true,
     },
     league: {
@@ -64,11 +65,6 @@ const Club = sequelize.define(
     timestamps: true,
   }
 );
-// Club.sync()
-//   .then((data) => {
-//     console.log("Clubs Table and model synced!!");
-//   })
-//   .catch((err) => {
-//     console.log("Error syncing table and model!!");
-//   });
+Club.belongsTo(User, { foreignKey: 'owner' });
+
 module.exports = Club;
