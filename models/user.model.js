@@ -1,15 +1,7 @@
 const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
 const UserRole = require("./role.model");
-const UserRoleEnum = [
-  "admin",
-  "athlet",
-  "manager",
-  "guest",
-  "judge",
-  "clubHead",
-  "parent",
-];
+
 const User = sequelize.define(
   "users",
   {
@@ -54,6 +46,11 @@ const User = sequelize.define(
     },
     age: {
       type: DataTypes.INTEGER,
+    },
+    club:{
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: true,
     },
     coach: {
       type: DataTypes.STRING,
