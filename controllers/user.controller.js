@@ -155,6 +155,9 @@ async function editProfile(req, res) {
 async function changeUserRole(req, res) {
   try {
     const { userId, role, action } = req.body;
+    if (!req.user || !req.user.roles.includes('admin')) {
+      return res.status(403).json({ msg: "Только администратор может изменять роли пользователей" });
+    }
 
     const user = await User.findOne({ where: { id: userId } });
     if (!user) {
@@ -172,9 +175,11 @@ async function changeUserRole(req, res) {
       },
     });
 
-    if (action === 'add') {
+    if (action === "add") {
       if (existingRole) {
-        return res.status(400).json({ msg: "У пользователя уже есть эта роль" });
+        return res
+          .status(400)
+          .json({ msg: "У пользователя уже есть эта роль" });
       }
 
       const newUserRole = await UserRole.create({
@@ -182,15 +187,19 @@ async function changeUserRole(req, res) {
         roles: role,
       });
 
-      return res.status(200).json({ msg: "Роль успешно добавлена пользователю" });
-    } else if (action === 'remove') {
+      return res
+        .status(200)
+        .json({ msg: "Роль успешно добавлена пользователю" });
+    } else if (action === "remove") {
       if (!existingRole) {
         return res.status(400).json({ msg: "У пользователя нет этой роли" });
       }
 
       await existingRole.destroy();
 
-      return res.status(200).json({ msg: "Роль успешно удалена у пользователя" });
+      return res
+        .status(200)
+        .json({ msg: "Роль успешно удалена у пользователя" });
     } else {
       return res.status(400).json({ msg: "Некорректное действие" });
     }
