@@ -4,7 +4,15 @@ const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 const UserRole = require("../models/role.model");
 const Anthropometry = require("../models/anthropometry.model");
-
+const UserRoleEnum = [
+  "admin",
+  "athlet",
+  "manager",
+  "guest",
+  "judge",
+  "clubHead",
+  "parent",
+];
 async function createUser(req, res) {
   try {
     const { name, surname, patronymic, email, phone, password } = req.body;
@@ -54,7 +62,6 @@ async function createUser(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
-
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -95,9 +102,108 @@ async function deleteProfile(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+async function editProfile(req, res) {
+  try {
+    const user = req.user;
+    const { name, surname, patronymic, age, city, gender, weight, height } =
+      req.body;
+
+    await User.update(
+      {
+        name,
+        surname,
+        patronymic,
+        age,
+        city,
+        gender,
+      },
+      { where: { id: user.id } }
+    );
+
+    let anthropometry = await Anthropometry.findOne({
+      where: { userId: user.id },
+    });
+
+    if (anthropometry) {
+      await Anthropometry.update(
+        {
+          weight,
+          height,
+        },
+        { where: { userId: user.id } }
+      );
+    } else {
+      anthropometry = await Anthropometry.create({
+        userId: user.id,
+        weight,
+        height,
+      });
+    }
+    user.name = name;
+    user.surname = surname;
+    user.patronymic = patronymic;
+    user.age = age;
+    user.city = city;
+    user.gender = gender;
+
+    const token = await generateToken(user);
+    res.status(200).json({ token, msg: "Профиль успешно обновлен" });
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+}
+async function changeUserRole(req, res) {
+  try {
+    const { userId, role, action } = req.body;
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ msg: "Пользователь не найден" });
+    }
+
+    if (!UserRoleEnum.includes(role)) {
+      return res.status(400).json({ msg: "Указана некорректная роль" });
+    }
+
+    let existingRole = await UserRole.findOne({
+      where: {
+        userId: userId,
+        roles: role,
+      },
+    });
+
+    if (action === 'add') {
+      if (existingRole) {
+        return res.status(400).json({ msg: "У пользователя уже есть эта роль" });
+      }
+
+      const newUserRole = await UserRole.create({
+        userId: userId,
+        roles: role,
+      });
+
+      return res.status(200).json({ msg: "Роль успешно добавлена пользователю" });
+    } else if (action === 'remove') {
+      if (!existingRole) {
+        return res.status(400).json({ msg: "У пользователя нет этой роли" });
+      }
+
+      await existingRole.destroy();
+
+      return res.status(200).json({ msg: "Роль успешно удалена у пользователя" });
+    } else {
+      return res.status(400).json({ msg: "Некорректное действие" });
+    }
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
   getMe,
   deleteProfile,
+  editProfile,
+  changeUserRole,
 };

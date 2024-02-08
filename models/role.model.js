@@ -23,15 +23,7 @@ const UserRole = sequelize.define("user_roles", {
   roles: {
     type: DataTypes.ENUM(UserRoleEnum),
     defaultValue: "guest",
-    allowNull: true,
-    get() {
-      return this.getDataValue("roles")
-        ? this.getDataValue("roles").split(";")
-        : [];
-    },
-    set(val) {
-      this.setDataValue("roles", val ? val.join(";") : null);
-    },
+    allowNull: false,
   },
 });
 

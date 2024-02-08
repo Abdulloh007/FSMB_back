@@ -7,4 +7,8 @@ router.post("/register", UserController.createUser);
 router.post("/login", UserController.loginUser);
 router.get("/me", checkAuth, UserController.getMe);
 router.delete("/profile", checkAuth, UserController.deleteProfile);
+router.put("/profile/edit" , checkAuth , UserController.editProfile)
+
+
+router.post("/user/changeRole" ,  UserController.changeUserRole)
 module.exports = router;

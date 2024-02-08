@@ -2,22 +2,23 @@ const jwt = require("jsonwebtoken");
 const UserRole = require("../models/role.model");
 const Anthropometry = require("../models/anthropometry.model");
 require("dotenv").config();
-
 async function generateToken(user) {
   try {
-    const userWithRoles = await UserRole.findOne({
+    const userRoles = await UserRole.findAll({
       where: { userId: user.id },
     });
 
-    if (!userWithRoles) {
+    if (!userRoles || userRoles.length === 0) {
       throw new Error("User roles not found");
     }
-
-    const roles = userWithRoles.roles;
+    const roles = userRoles.map((userRole) => userRole.roles);
     const anthropometryData = await Anthropometry.findOne({
       where: { userId: user.id },
     });
 
+    if (!anthropometryData) {
+      throw new Error("Anthropometry data not found for the user");
+    }
 
     const token = jwt.sign(
       {
@@ -39,7 +40,7 @@ async function generateToken(user) {
         city: user.city,
         gender: user.gender,
         rating: user.rating,
-        roles: roles,
+        roles: roles.flat(),
       },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "90d" }
