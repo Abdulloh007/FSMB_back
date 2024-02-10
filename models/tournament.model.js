@@ -4,8 +4,9 @@ const { DataTypes } = require("sequelize");
 const Tournament = sequelize.define("tournaments", {
   id: {
     type: DataTypes.UUID,
-    primaryKey: true,
-    allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
@@ -47,10 +48,10 @@ const Tournament = sequelize.define("tournaments", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  league: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  // league: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
  
 });
 
