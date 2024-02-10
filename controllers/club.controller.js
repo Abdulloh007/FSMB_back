@@ -67,7 +67,24 @@ async function newClub(req, res) {
 }
 async function getAllClubs(req, res) {
   try {
-    const clubs = await Club.findAll();
+    const { city, name, membersAge, league } = req.query;
+    let filter = {};
+
+    if (city) {
+      filter.city = city;
+    }
+
+    if (name) {
+      filter.name = name;
+    }
+    if (membersAge) {
+      filter.membersAge = membersAge;
+    }
+    if (league) {
+      filter.league = league;
+    }
+
+    const clubs = await Club.findAll({ where: filter });
     res.status(200).json({ clubs });
   } catch (error) {
     res.status(500).json({ msg: "Произошла ошибка при получении клубов" });

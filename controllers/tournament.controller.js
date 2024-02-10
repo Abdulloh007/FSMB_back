@@ -17,6 +17,7 @@ async function createTournament(req, res) {
       nomination,
       ageFrom,
       ageTo,
+      league,
     } = req.body;
 
     if (
@@ -26,6 +27,7 @@ async function createTournament(req, res) {
       !date ||
       !price ||
       !gender ||
+      !league ||
       !nomination ||
       !ageFrom ||
       !ageTo
@@ -56,9 +58,7 @@ async function createTournament(req, res) {
       ageTo,
       owner: userId,
     });
-    res
-      .status(200)
-      .json({ message: "Успешно создано!", data: newTournament });
+    res.status(200).json({ message: "Успешно создано!", data: newTournament });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Не удалось создать турнир!" });
@@ -66,12 +66,38 @@ async function createTournament(req, res) {
 }
 async function getAllTournaments(req, res) {
   try {
-    const tournaments = await Tournament.findAll();
+    const { city, gender, nomination, ageFrom, ageTo, league } = req.query;
+    let filter = {};
+
+    if (city) {
+      filter.city = city;
+    }
+
+    if (gender && Object.values(GenderEnum).includes(gender)) {
+      filter.gender = gender;
+    }
+
+    if (nomination) {
+      filter.nomination = nomination;
+    }
+    if (league) {
+      filter.league = league;
+    }
+    if (ageFrom) {
+      filter.ageFrom = ageFrom;
+    }
+
+    if (ageTo) {
+      filter.ageTo = ageTo;
+    }
+
+    const tournaments = await Tournament.findAll({ where: filter });
     res.status(200).json({ data: tournaments });
   } catch (error) {
     res.status(400).json({ message: "Не удалось получить турниры!" });
   }
 }
+
 async function updateTournament(req, res) {
   try {
     const tournamentId = req.params.id;
@@ -99,6 +125,7 @@ async function updateTournament(req, res) {
       nomination,
       ageFrom,
       ageTo,
+      league,
     } = req.body;
 
     if (
@@ -108,6 +135,7 @@ async function updateTournament(req, res) {
       !date ||
       !price ||
       !gender ||
+      !league ||
       !nomination ||
       !ageFrom ||
       !ageTo
@@ -137,6 +165,7 @@ async function updateTournament(req, res) {
         nomination,
         ageFrom,
         ageTo,
+        league,
       },
       { where: { id: tournamentId } }
     );
@@ -151,7 +180,7 @@ async function updateTournament(req, res) {
 async function deleteTournament(req, res) {
   try {
     const tournamentId = req.params.id;
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     const tournament = await Tournament.findByPk(tournamentId);
     if (!tournament) {

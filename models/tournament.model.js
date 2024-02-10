@@ -48,10 +48,10 @@ const Tournament = sequelize.define("tournaments", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  // league: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  // },
+  league: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
  
 });
 
