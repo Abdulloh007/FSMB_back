@@ -54,9 +54,9 @@ async function createUser(req, res) {
     const userRole = await UserRole.create({
       userId: newUser.id,
     });
-    const newAnthropometry = await Anthropometry.create({
-      userId: newUser.id,
-    });
+    // const newAnthropometry = await Anthropometry.create({
+    //   userId: newUser.id,
+    // });
     res.status(201).json({ msg: "Пользователь успешно создан!" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
@@ -105,8 +105,7 @@ async function deleteProfile(req, res) {
 async function editProfile(req, res) {
   try {
     const user = req.user;
-    const { name, surname, patronymic, age, city, gender, weight, height } =
-      req.body;
+    const { name, surname, patronymic, age, city, gender } = req.body;
 
     await User.update(
       {
@@ -120,25 +119,6 @@ async function editProfile(req, res) {
       { where: { id: user.id } }
     );
 
-    let anthropometry = await Anthropometry.findOne({
-      where: { userId: user.id },
-    });
-
-    if (anthropometry) {
-      await Anthropometry.update(
-        {
-          weight,
-          height,
-        },
-        { where: { userId: user.id } }
-      );
-    } else {
-      anthropometry = await Anthropometry.create({
-        userId: user.id,
-        weight,
-        height,
-      });
-    }
     user.name = name;
     user.surname = surname;
     user.patronymic = patronymic;
@@ -155,8 +135,10 @@ async function editProfile(req, res) {
 async function changeUserRole(req, res) {
   try {
     const { userId, role, action } = req.body;
-    if (!req.user || !req.user.roles.includes('admin')) {
-      return res.status(403).json({ msg: "Только администратор может изменять роли пользователей" });
+    if (!req.user || !req.user.roles.includes("admin")) {
+      return res.status(403).json({
+        msg: "Только администратор может изменять роли пользователей",
+      });
     }
 
     const user = await User.findOne({ where: { id: userId } });
