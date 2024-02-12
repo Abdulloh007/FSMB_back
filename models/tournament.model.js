@@ -4,9 +4,9 @@ const { DataTypes } = require("sequelize");
 const Tournament = sequelize.define("tournaments", {
   id: {
     type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-      allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
@@ -33,7 +33,7 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   gender: {
-    type: DataTypes.ENUM("male" , "female"),
+    type: DataTypes.ENUM("male", "female"),
     allowNull: false,
   },
   nomination: {
@@ -49,11 +49,9 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   league: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM("a", "b", "c", "d", "e", "f", "g", "h", "i"),
     allowNull: false,
   },
- 
 });
-
 
 module.exports = Tournament;

@@ -44,8 +44,8 @@ const Club = sequelize.define(
       allowNull: true,
     },
     league: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.ENUM("a", "b", "c", "d", "e", "f", "g", "h", "i"),
+      allowNull: false,
     },
     accreditation: {
       type: DataTypes.BOOLEAN,
@@ -65,6 +65,6 @@ const Club = sequelize.define(
     timestamps: true,
   }
 );
-Club.belongsTo(User, { foreignKey: 'owner' });
+Club.belongsTo(User, { foreignKey: "owner" });
 
 module.exports = Club;

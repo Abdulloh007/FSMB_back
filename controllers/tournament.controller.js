@@ -4,6 +4,19 @@ const GenderEnum = {
   MALE: "male",
   FEMALE: "female",
 };
+
+const LEAGUE_ENUM = {
+  a: "a",
+  b: "b",
+  c: "c",
+  d: "d",
+  e: "e",
+  f: "f",
+  g: "g",
+  h: "h",
+  i: "i",
+};
+
 async function createTournament(req, res) {
   try {
     const userId = req.user.id;
@@ -38,6 +51,9 @@ async function createTournament(req, res) {
     if (!Object.values(GenderEnum).includes(gender)) {
       return res.status(400).json({ message: "Недопустимое значение пола!" });
     }
+    if (!Object.values(LEAGUE_ENUM).includes(league)) {
+      return res.status(400).json({ message: "Недопустимое значение лиги!" });
+    }
 
     const city = await City.findByPk(cityId);
     if (!city) {
@@ -56,6 +72,7 @@ async function createTournament(req, res) {
       nomination,
       ageFrom,
       ageTo,
+      league,
       owner: userId,
     });
     res.status(200).json({ message: "Успешно создано!", data: newTournament });

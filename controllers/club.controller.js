@@ -2,6 +2,19 @@ const { Op } = require("sequelize");
 const Club = require("../models/club.model");
 const City = require("../models/city.model");
 const User = require("../models/user.model");
+
+const LEAGUE_ENUM = {
+  a: "a",
+  b: "b",
+  c: "c",
+  d: "d",
+  e: "e",
+  f: "f",
+  g: "g",
+  h: "h",
+  i: "i",
+};
+
 async function getClubs(req, res) {
   try {
     const clubs = await Club.findAll();
@@ -27,7 +40,8 @@ async function getClubById(req, res) {
 async function newClub(req, res) {
   try {
     const user = req.user;
-    const { name, cityId, address, phone, email, description } = req.body;
+    const { name, cityId, address, phone, email, description, league } =
+      req.body;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res
@@ -50,6 +64,9 @@ async function newClub(req, res) {
       }
       cityName = city.name;
     }
+    if (!Object.values(LEAGUE_ENUM).includes(league)) {
+      return res.status(400).json({ message: "Недопустимое значение лиги!" });
+    }
 
     const newClub = await Club.create({
       name,
@@ -58,6 +75,7 @@ async function newClub(req, res) {
       description,
       phone,
       email,
+      league,
       owner: user.id,
     });
     res.status(200).json({ club: newClub, msg: "Клуб успешно создан" });
@@ -116,7 +134,8 @@ async function deleteClub(req, res) {
 async function editClub(req, res) {
   try {
     const clubId = req.params.id;
-    const { name, cityId, address, phone, email, description } = req.body;
+    const { name, cityId, address, phone, email, description, league } =
+      req.body;
     const club = await Club.findByPk(clubId);
 
     if (!club) {
@@ -144,6 +163,7 @@ async function editClub(req, res) {
     club.phone = phone;
     club.email = email;
     club.description = description;
+    club.league = league;
 
     await club.save();
 
