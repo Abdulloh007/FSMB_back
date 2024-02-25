@@ -13,6 +13,7 @@ const UserRoleEnum = [
   "clubHead",
   "parent",
 ];
+
 async function createUser(req, res) {
   try {
     const { name, surname, patronymic, email, phone, password } = req.body;
@@ -62,6 +63,7 @@ async function createUser(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -75,6 +77,7 @@ async function loginUser(req, res) {
     if (!isPasswordMatch) {
       return res.status(401).json({ msg: "Неверный пароль" });
     }
+    
     const token = await generateToken(user);
 
     res.status(200).json({ token, msg: "Успешный вход в систему" });
@@ -82,6 +85,7 @@ async function loginUser(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function getMe(req, res) {
   try {
     const user = req.user;
@@ -89,8 +93,9 @@ async function getMe(req, res) {
     const userData = await User.findOne({ where: { id: user.id } });
 
     res.status(200).json({ user: userData });
-  } catch (error) {}
+  } catch (error) { }
 }
+
 async function deleteProfile(req, res) {
   try {
     const user = req.user;
@@ -102,6 +107,7 @@ async function deleteProfile(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function editProfile(req, res) {
   try {
     const user = req.user;
@@ -132,6 +138,7 @@ async function editProfile(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function changeUserRole(req, res) {
   try {
     const { userId, role, action } = req.body;
