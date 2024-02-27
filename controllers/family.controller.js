@@ -1,5 +1,6 @@
 const { Op } = require("sequelize");
 const Family = require("../models/family.model");
+const User = require("../models/user.model");
 
 const RelationshipType = {
   SPOUSE: "супруг(а)",
@@ -21,10 +22,10 @@ async function getFamily(req, res) {
     const user = req.user;
     const families = await Family.findAll({
       where: {
-        [Op.or]: [{ userId1: user.id }, { userId2: user.id }],
-      },
+        [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
+      }
     });
-    return res.status(200).json(families);
+    return res.status(200).json({...families[0]});
   } catch (error) {
     return res
       .status(500)

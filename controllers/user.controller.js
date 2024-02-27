@@ -91,8 +91,11 @@ async function getMe(req, res) {
     const user = req.user;
 
     const userData = await User.findOne({ where: { id: user.id } });
+    const anthropometryData = await Anthropometry.findOne({where: { userId: user.id }});
+    
 
-    res.status(200).json({ user: userData });
+    res.status(200).json({...userData.dataValues, anthropometry: anthropometryData});
+
   } catch (error) { }
 }
 
