@@ -25,7 +25,7 @@ async function getFamily(req, res) {
         [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
       }
     });
-    return res.status(200).json({...families[0]});
+    return res.status(200).json(families);
   } catch (error) {
     return res
       .status(500)

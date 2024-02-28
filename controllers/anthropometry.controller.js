@@ -68,7 +68,7 @@ async function getAnthropometry(req, res) {
       return res.status(404).json({ msg: "Антропометрия не найдена" });
     }
 
-    res.status(200).json({ anthropometry });
+    res.status(200).json(anthropometry);
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }

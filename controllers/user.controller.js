@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 const UserRole = require("../models/role.model");
 const Anthropometry = require("../models/anthropometry.model");
+const Family = require("../models/family.model");
+
 const UserRoleEnum = [
   "admin",
   "athlet",
@@ -92,9 +94,32 @@ async function getMe(req, res) {
 
     const userData = await User.findOne({ where: { id: user.id } });
     const anthropometryData = await Anthropometry.findOne({where: { userId: user.id }});
+    const families = await Family.findAll({
+      where: {
+        [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
+      }
+    });
     
+    const familyMembers = []
+    families.map(item => { 
+      return familyMembers.push({member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship})
+    })
 
-    res.status(200).json({...userData.dataValues, anthropometry: anthropometryData});
+    res.status(200).json({...userData.dataValues, anthropometry: anthropometryData, family: familyMembers});
+
+  } catch (error) { }
+}
+
+async function getById(req, res) {
+  try {
+    const userId = req.params.id;
+    const userData = await User.findOne({ where: { id: userId } });
+
+
+    res.status(200).json({
+      name: userData.name,
+      surname: userData.surname,
+    });
 
   } catch (error) { }
 }
@@ -204,6 +229,7 @@ module.exports = {
   createUser,
   loginUser,
   getMe,
+  getById,
   deleteProfile,
   editProfile,
   changeUserRole,

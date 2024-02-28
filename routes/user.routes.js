@@ -6,6 +6,7 @@ const checkAuth = require("../utils/checkAuth");
 router.post("/register", UserController.createUser);
 router.post("/login", UserController.loginUser);
 router.get("/me", checkAuth, UserController.getMe);
+router.get("/user/:id", checkAuth, UserController.getById);
 router.delete("/profile", checkAuth, UserController.deleteProfile);
 router.put("/profile/edit", checkAuth, UserController.editProfile);
 
