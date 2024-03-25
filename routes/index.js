@@ -8,6 +8,7 @@ const reportRouter = require("./report.routes");
 const familyRouter = require("./family.routes");
 const anthropometryRouter = require("./anthropometry.routes");
 const tournamentRouter = require("./torunament.routes");
+const leagueRouter = require("./league.routes");
 
 router.use("/", userRouter);
 router.use("/", clubRouter);
@@ -16,5 +17,6 @@ router.use("/", reportRouter);
 router.use("/", familyRouter);
 router.use("/", anthropometryRouter);
 router.use("/", tournamentRouter);
+router.use("/", leagueRouter);
 
 module.exports = router;

@@ -1,11 +1,8 @@
 const express = require("express");
 const conf = require("./config/conf");
-const cors = require('cors')
-const { sequelize } = require("./sequelize.db");
+const cors = require('cors');
 const routes = require("./routes/index");
-const Club = require("./models/club.model");
-const Tournament = require("./models/tournament.model");
-const Application = require("./models/application.model");
+
 const port = conf.server.port || 3000;
 const host = conf.server.host || "localhost";
 const app = express();
