@@ -1,16 +1,16 @@
 module.exports = {
     // Database configuration
     database: {
-        host: 'localhost',
-        port: 5432,
-        username: 'your_username',
-        password: 'your_password',
-        database: 'your_database_name',
+        host: '127.0.0.1',
+        port: 3306,
+        username: 'root',
+        password: '',
+        database: 'fsmb',
     },
 
     // Server configuration
     server: {
-        port: 3000,
+        port: 3020,
         host: 'localhost',
     },
 
