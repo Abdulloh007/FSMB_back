@@ -5,8 +5,8 @@ const Notification = sequelize.define(
   "notifications",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
@@ -23,9 +23,9 @@ const Notification = sequelize.define(
       allowNull: false,
     },
   },
-
   {
     timestamps: true,
   }
 );
+
 module.exports = Notification;

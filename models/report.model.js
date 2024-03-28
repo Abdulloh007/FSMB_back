@@ -5,8 +5,8 @@ const Report = sequelize.define(
   "reports",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
@@ -32,4 +32,5 @@ const Report = sequelize.define(
     timestamps: true,
   }
 );
+
 module.exports = Report;

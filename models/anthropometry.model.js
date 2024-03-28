@@ -39,6 +39,5 @@ const Anthropometry = sequelize.define(
   }
 );
 
-Anthropometry.belongsTo(User, { foreignKey: "userId" });
 
 module.exports = Anthropometry;

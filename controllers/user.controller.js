@@ -54,12 +54,18 @@ async function createUser(req, res) {
       phone,
       password: hashedPassword,
     });
-    const userRole = await UserRole.create({
+    await UserRole.create({
       userId: newUser.id,
     });
-    // const newAnthropometry = await Anthropometry.create({
-    //   userId: newUser.id,
-    // });
+    await Anthropometry.create({
+      userId: newUser.id,
+      weight: 0,
+      height: 0,
+      shoes: 0,
+      helmet: 0,
+      head: 0,
+      armor: 0
+    });
     res.status(201).json({ msg: "Пользователь успешно создан!" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
@@ -79,7 +85,7 @@ async function loginUser(req, res) {
     if (!isPasswordMatch) {
       return res.status(401).json({ msg: "Неверный пароль" });
     }
-    
+
     const token = await generateToken(user);
 
     res.status(200).json({ token, msg: "Успешный вход в систему" });
@@ -93,19 +99,21 @@ async function getMe(req, res) {
     const user = req.user;
 
     const userData = await User.findOne({ where: { id: user.id } });
-    const anthropometryData = await Anthropometry.findOne({where: { userId: user.id }});
+    const anthropometryData = await Anthropometry.findOne({ where: { userId: user.id } });
     const families = await Family.findAll({
       where: {
         [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
       }
     });
-    
+
+    delete userData.dataValues["password"]
+
     const familyMembers = []
-    families.map(item => { 
-      return familyMembers.push({member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship})
+    families.map(item => {
+      return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
     })
 
-    res.status(200).json({...userData.dataValues, anthropometry: anthropometryData, family: familyMembers});
+    res.status(200).json({ ...userData.dataValues, anthropometry: anthropometryData, family: familyMembers });
 
   } catch (error) { }
 }

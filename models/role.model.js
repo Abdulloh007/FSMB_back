@@ -1,5 +1,6 @@
 const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
+
 const UserRoleEnum = [
   "admin",
   "athlet",
@@ -9,6 +10,7 @@ const UserRoleEnum = [
   "clubHead",
   "parent",
 ];
+
 const UserRole = sequelize.define("user_roles", {
   id: {
     type: DataTypes.INTEGER,

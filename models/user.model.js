@@ -48,21 +48,20 @@ const User = sequelize.define(
       type: DataTypes.INTEGER,
     },
     club:{
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     coach: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
     city: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
     gender: {
       type: DataTypes.ENUM("male", "female"),
     },
     rating: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
     },
   },
   {

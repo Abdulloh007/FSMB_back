@@ -3,8 +3,8 @@ const { DataTypes } = require("sequelize");
 
 const Tournament = sequelize.define("tournaments", {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true,
     allowNull: false,
   },
@@ -13,7 +13,7 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   city: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   address: {
@@ -25,11 +25,11 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   price: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     allowNull: false,
   },
   owner: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   gender: {
@@ -37,7 +37,7 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   nomination: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   ageFrom: {
@@ -49,8 +49,24 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   league: {
-    type: DataTypes.ENUM("a", "b", "c", "d", "e", "f", "g", "h", "i"),
+    type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  first_place: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  second_place: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  third_place: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  fourth_place: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
 });
 

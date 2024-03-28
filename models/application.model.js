@@ -4,21 +4,14 @@ const { DataTypes } = require("sequelize");
 
 const Application = sequelize.define("applications", {
   id: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false,
-    defaultValue: DataTypes.UUIDV4,
+    autoIncrement: true,
   },
-  playerName: {
-    type: DataTypes.STRING,
+  applier: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isEmail: true,
-    },
   },
   tournamentId: {
     type: DataTypes.UUID,
@@ -35,14 +28,4 @@ const Application = sequelize.define("applications", {
   },
 });
 
-Tournament.hasMany(Application, { foreignKey: "tournamentId" });
-Application.belongsTo(Tournament, { foreignKey: "tournamentId" });
-
-// Application.sync()
-//   .then((data) => {
-//     console.log("Applications Table and model synced!!");
-//   })
-//   .catch((err) => {
-//     console.log("Error syncing table and model!!");
-//   });
 module.exports = Application;

@@ -86,7 +86,7 @@ async function deleteLeague(req, res) {
 
         const league = await League.findByPk(leagueId);
         if (!league) {
-            return res.status(404).json({ message: "Турнир не найден!" });
+            return res.status(404).json({ message: "Лига не найден!" });
         }
 
         await League.destroy({
@@ -96,7 +96,7 @@ async function deleteLeague(req, res) {
         res.status(200).json({ message: "Успешно удалено!" });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось удалить лига!" });
+        res.status(400).json({ message: "Не удалось удалить лигу!" });
     }
 }
 

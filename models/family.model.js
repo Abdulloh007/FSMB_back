@@ -28,6 +28,5 @@ const Family = sequelize.define(
     timestamps: true,
   }
 );
-Family.belongsTo(User, { foreignKey: "userId1", as: "user1" });
-Family.belongsTo(User, { foreignKey: "userId2", as: "user2" });
+
 module.exports = Family;

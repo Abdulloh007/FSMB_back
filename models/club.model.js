@@ -44,7 +44,7 @@ const Club = sequelize.define(
       allowNull: true,
     },
     league: {
-      type: DataTypes.ENUM("a", "b", "c", "d", "e", "f", "g", "h", "i"),
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     accreditation: {
