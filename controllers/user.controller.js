@@ -27,7 +27,7 @@ async function createUser(req, res) {
         .json({ msg: "Некорректный формат электронной почты" });
     }
 
-    const phoneRegex = /^\+992\d{9}$/;
+    const phoneRegex = /^\+7\d{10}$/;
     if (!phoneRegex.test(phone)) {
       return res
         .status(400)
