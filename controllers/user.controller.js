@@ -27,7 +27,7 @@ async function createUser(req, res) {
         .json({ msg: "Некорректный формат электронной почты" });
     }
 
-    const phoneRegex = /^\+992\d{9}$/;
+    const phoneRegex = /^\+7\d{10}$/;
     if (!phoneRegex.test(phone)) {
       return res
         .status(400)
@@ -54,18 +54,21 @@ async function createUser(req, res) {
       phone,
       password: hashedPassword,
     });
+
     await UserRole.create({
       userId: newUser.id,
     });
-    await Anthropometry.create({
-      userId: newUser.id,
-      weight: 0,
-      height: 0,
-      shoes: 0,
-      helmet: 0,
-      head: 0,
-      armor: 0
-    });
+
+    // await Anthropometry.create({
+    //   userId: newUser.id,
+    //   weight: 0,
+    //   height: 0,
+    //   shoes: 0,
+    //   helmet: 0,
+    //   head: 0,
+    //   armor: 0
+    // });
+
     res.status(201).json({ msg: "Пользователь успешно создан!" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
