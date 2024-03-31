@@ -6,9 +6,9 @@ const Club = sequelize.define(
   "clubs",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
       allowNull: false,
     },
     name: {
@@ -50,16 +50,6 @@ const Club = sequelize.define(
     accreditation: {
       type: DataTypes.BOOLEAN,
     },
-    // members: {
-    //   type: DataTypes.STRING,
-    //   allowNull: true,
-    //   get() {
-    //     return this.getDataValue("members").split(";");
-    //   },
-    //   set(val) {
-    //     this.setDataValue("members", val.join(";"));
-    //   },
-    // },
   },
   {
     timestamps: true,
