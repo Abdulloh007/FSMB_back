@@ -137,7 +137,7 @@ async function getMe(req, res) {
     });
 
     delete userData.dataValues["password"]
-
+    if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
     const familyMembers = []
     families.map(item => {
       return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
