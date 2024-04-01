@@ -17,21 +17,27 @@ const Anthropometry = sequelize.define(
     },
     weight: {
       type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
     height: {
       type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
     shoes: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
     armor: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
     head: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
     helmet: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
+      defaultValue: 0.00
     },
   },
   {

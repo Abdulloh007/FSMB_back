@@ -11,6 +11,8 @@ app.use(cors());
 
 app.use(express.json());
 
+app.use("/static", express.static('uploads'));
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });

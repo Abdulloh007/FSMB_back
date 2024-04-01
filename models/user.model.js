@@ -37,6 +37,10 @@ const User = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    birth: {
+      type: DataTypes.DATEONLY,
+      allowNull: true
+    },
     balance: {
       type: DataTypes.FLOAT,
       defaultValue: 0,

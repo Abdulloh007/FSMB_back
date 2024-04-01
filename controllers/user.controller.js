@@ -5,6 +5,8 @@ const generateToken = require("../utils/generateToken");
 const UserRole = require("../models/role.model");
 const Anthropometry = require("../models/anthropometry.model");
 const Family = require("../models/family.model");
+const checkAuth = require("../utils/checkAuth");
+const jwt = require("jsonwebtoken");
 
 const UserRoleEnum = [
   "admin",
@@ -27,8 +29,7 @@ async function createUser(req, res) {
         .json({ msg: "Некорректный формат электронной почты" });
     }
 
-    const phoneRegex = /^\+7\d{10}$/;
-    if (!phoneRegex.test(phone)) {
+    if (!isNaN(phone) && phone.lenght > 8 && phone.lenght < 12) {
       return res
         .status(400)
         .json({ msg: "Некорректный формат номера телефона" });
@@ -59,15 +60,9 @@ async function createUser(req, res) {
       userId: newUser.id,
     });
 
-    // await Anthropometry.create({
-    //   userId: newUser.id,
-    //   weight: 0,
-    //   height: 0,
-    //   shoes: 0,
-    //   helmet: 0,
-    //   head: 0,
-    //   armor: 0
-    // });
+    await Anthropometry.create({
+      userId: newUser.id
+    });
 
     res.status(201).json({ msg: "Пользователь успешно создан!" });
   } catch (error) {
@@ -97,12 +92,43 @@ async function loginUser(req, res) {
   }
 }
 
+async function uploadUserPhoto(req, res) {
+  const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  let user = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      user = decoded;
+    } catch (error) {
+      return res.status(403).json({
+        msg: "Нет доступа",
+      });
+    }
+  } else {
+    return res.status(403).json({
+      msg: "Нет доступа",
+    });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  try {
+    User.update({photo: req.file.filename}, { where: { id: user.id }})
+    res.status(200).json({ message: 'Успешно обновлен', filename: req.file.filename });
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+  
+}
+
 async function getMe(req, res) {
   try {
     const user = req.user;
 
     const userData = await User.findOne({ where: { id: user.id } });
-    const userRole = await UserRole.findOne({ where: { userId: user.id } });
+    const userRole = await UserRole.findAll({ where: { userId: user.id } });
     const anthropometryData = await Anthropometry.findOne({ where: { userId: user.id } });
     const families = await Family.findAll({
       where: {
@@ -240,6 +266,7 @@ async function changeUserRole(req, res) {
 module.exports = {
   createUser,
   loginUser,
+  uploadUserPhoto,
   getMe,
   getById,
   deleteProfile,
