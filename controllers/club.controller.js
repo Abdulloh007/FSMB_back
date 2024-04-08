@@ -1,19 +1,6 @@
 const { Op } = require("sequelize");
 const Club = require("../models/club.model");
-const City = require("../models/city.model");
 const User = require("../models/user.model");
-
-const LEAGUE_ENUM = {
-  a: "a",
-  b: "b",
-  c: "c",
-  d: "d",
-  e: "e",
-  f: "f",
-  g: "g",
-  h: "h",
-  i: "i",
-};
 
 async function getClubs(req, res) {
   try {
@@ -40,7 +27,7 @@ async function getClubById(req, res) {
 async function newClub(req, res) {
   try {
     const user = req.user;
-    const { name, cityId, address, phone, email, description, league } =
+    const { name, city, address, phone, email, description, league } =
       req.body;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -56,21 +43,13 @@ async function newClub(req, res) {
         .json({ msg: "Некорректный формат номера телефона" });
     }
 
-    let cityName;
-    if (cityId) {
-      const city = await City.findByPk(cityId);
-      if (!city) {
-        return res.status(400).json({ msg: "Некорректный город" });
-      }
-      cityName = city.name;
-    }
     if (!Object.values(LEAGUE_ENUM).includes(league)) {
       return res.status(400).json({ message: "Недопустимое значение лиги!" });
     }
 
     const newClub = await Club.create({
       name,
-      city: cityName,
+      city: city,
       address,
       description,
       phone,
@@ -134,7 +113,7 @@ async function deleteClub(req, res) {
 async function editClub(req, res) {
   try {
     const clubId = req.params.id;
-    const { name, cityId, address, phone, email, description, league } =
+    const { name, city, address, phone, email, description, league } =
       req.body;
     const club = await Club.findByPk(clubId);
 
@@ -148,17 +127,8 @@ async function editClub(req, res) {
         .json({ msg: "Недостаточно прав для редактирования клуба" });
     }
 
-    let cityName;
-    if (cityId) {
-      const city = await City.findByPk(cityId);
-      if (!city) {
-        return res.status(400).json({ msg: "Некорректный город" });
-      }
-      cityName = city.name;
-    }
-
     club.name = name;
-    club.city = cityName;
+    club.city = city;
     club.address = address;
     club.phone = phone;
     club.email = email;

@@ -59,7 +59,12 @@ const User = sequelize.define(
       type: DataTypes.INTEGER,
     },
     city: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
+      allowNull: null
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     gender: {
       type: DataTypes.ENUM("male", "female"),

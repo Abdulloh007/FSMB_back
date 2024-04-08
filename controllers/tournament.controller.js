@@ -1,20 +1,8 @@
-const City = require("../models/city.model");
 const Tournament = require("../models/tournament.model");
+const League = require("../models/league.model");
 const GenderEnum = {
   MALE: "male",
   FEMALE: "female",
-};
-
-const LEAGUE_ENUM = {
-  a: "a",
-  b: "b",
-  c: "c",
-  d: "d",
-  e: "e",
-  f: "f",
-  g: "g",
-  h: "h",
-  i: "i",
 };
 
 async function createTournament(req, res) {
@@ -22,7 +10,7 @@ async function createTournament(req, res) {
     const userId = req.user.id;
     const {
       name,
-      cityId,
+      city,
       address,
       date,
       price,
@@ -35,7 +23,7 @@ async function createTournament(req, res) {
 
     if (
       !name ||
-      !cityId ||
+      !city ||
       !address ||
       !date ||
       !price ||
@@ -48,23 +36,18 @@ async function createTournament(req, res) {
       return res.status(400).json({ message: "Все поля обязательны!" });
     }
 
+    const leagueCl = await League.findByPk(league);
+
     if (!Object.values(GenderEnum).includes(gender)) {
       return res.status(400).json({ message: "Недопустимое значение пола!" });
     }
-    if (!Object.values(LEAGUE_ENUM).includes(league)) {
+    if (leagueCl === null) {
       return res.status(400).json({ message: "Недопустимое значение лиги!" });
     }
 
-    const city = await City.findByPk(cityId);
-    if (!city) {
-      return res.status(400).json({ message: "Город не найден!" });
-    }
-
-    const cityName = city.name;
-
     const newTournament = await Tournament.create({
       name,
-      city: cityName,
+      city,
       address,
       date,
       price,
@@ -119,9 +102,8 @@ async function updateTournament(req, res) {
   try {
     const tournamentId = req.params.id;
     const userId = req.user.id;
-    console.log(userId);
     const tournament = await Tournament.findByPk(tournamentId);
-    console.log(tournament);
+    
     if (!tournament) {
       return res.status(404).json({ message: "Турнир не найден!" });
     }
@@ -134,7 +116,7 @@ async function updateTournament(req, res) {
 
     const {
       name,
-      cityId,
+      city,
       address,
       date,
       price,
@@ -147,7 +129,7 @@ async function updateTournament(req, res) {
 
     if (
       !name ||
-      !cityId ||
+      !city ||
       !address ||
       !date ||
       !price ||
@@ -164,17 +146,10 @@ async function updateTournament(req, res) {
       return res.status(400).json({ message: "Недопустимое значение пола!" });
     }
 
-    const city = await City.findByPk(cityId);
-    if (!city) {
-      return res.status(400).json({ message: "Город не найден!" });
-    }
-
-    const cityName = city.name;
-
     await Tournament.update(
       {
         name,
-        city: cityName,
+        city,
         address,
         date,
         price,
@@ -220,6 +195,7 @@ async function deleteTournament(req, res) {
     res.status(400).json({ message: "Не удалось удалить турнир!" });
   }
 }
+
 module.exports = {
   createTournament,
   getAllTournaments,
