@@ -143,7 +143,7 @@ async function getMe(req, res) {
       return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
     })
 
-    res.status(200).json({ ...userData.dataValues, userRole, anthropometry: anthropometryData, family: familyMembers });
+    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers });
 
   } catch (error) { }
 }
