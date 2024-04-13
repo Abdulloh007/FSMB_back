@@ -7,6 +7,7 @@ const Anthropometry = require("../models/anthropometry.model");
 const Family = require("../models/family.model");
 const checkAuth = require("../utils/checkAuth");
 const jwt = require("jsonwebtoken");
+const Club = require("../models/club.model");
 
 const UserRoleEnum = [
   "admin",
@@ -135,6 +136,7 @@ async function getMe(req, res) {
         [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
       }
     });
+    const userClub = Club.findByPk(user.club) 
 
     delete userData.dataValues["password"]
     if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
@@ -143,7 +145,7 @@ async function getMe(req, res) {
       return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
     })
 
-    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers });
+    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers, club: userClub});
 
   } catch (error) { }
 }
