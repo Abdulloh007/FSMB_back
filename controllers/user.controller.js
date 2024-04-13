@@ -115,12 +115,12 @@ async function uploadUserPhoto(req, res) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
   try {
-    User.update({photo: req.file.filename}, { where: { id: user.id }})
+    User.update({ photo: req.file.filename }, { where: { id: user.id } })
     res.status(200).json({ message: 'Успешно обновлен', filename: req.file.filename });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
-  
+
 }
 
 async function getMe(req, res) {
@@ -191,7 +191,7 @@ async function editProfile(req, res) {
         city,
         gender,
         address,
-        phone, 
+        phone,
         email,
         birth
       },
@@ -284,7 +284,9 @@ async function searchUser(req, res) {
 
     res.status(200).json({ ...userData.dataValues });
 
-  } catch (error) { }
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
 }
 
 
