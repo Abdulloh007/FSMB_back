@@ -177,9 +177,9 @@ async function deleteProfile(req, res) {
 async function editProfile(req, res) {
   try {
     const user = req.user;
-    const { name, surname, patronymic, age, city, gender, address, phone, email, birth } = req.body;
+    const { name, surname, patronymic, city, gender, address, phone, email, birth } = req.body;
 
-    age = (new Date() - new Date(birth)) / 1000 / 60 / 60 / 24 / 365;
+    const age = (new Date() - new Date(birth)) / 1000 / 60 / 60 / 24 / 365;
 
     await User.update(
       {
