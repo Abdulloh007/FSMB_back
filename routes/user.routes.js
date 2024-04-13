@@ -21,6 +21,7 @@ router.post("/login", UserController.loginUser);
 router.post("/uploadAvatar", upload.single('file'), UserController.uploadUserPhoto)
 router.get("/me", checkAuth, UserController.getMe);
 router.get("/user/:id", checkAuth, UserController.getById);
+router.get("/s_user/:name", checkAuth, UserController.searchUser);
 router.delete("/profile", checkAuth, UserController.deleteProfile);
 router.put("/profile/edit", checkAuth, UserController.editProfile);
 

@@ -274,6 +274,20 @@ async function changeUserRole(req, res) {
   }
 }
 
+async function searchUser(req, res) {
+  try {
+    const user = req.user;
+    const userData = await User.findAll({ where: { name: req.params.name } });
+    delete userData.dataValues["password"]
+
+    if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
+
+    res.status(200).json({ ...userData.dataValues });
+
+  } catch (error) { }
+}
+
+
 module.exports = {
   createUser,
   loginUser,
@@ -283,4 +297,5 @@ module.exports = {
   deleteProfile,
   editProfile,
   changeUserRole,
+  searchUser
 };
