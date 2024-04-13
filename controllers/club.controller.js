@@ -47,8 +47,8 @@ async function newClub(req, res) {
         .json({ msg: "Некорректный формат номера телефона" });
     }
 
-    const clubLeague = await League.findByPk(league)
-    if (!clubLeague) {
+    // const clubLeague = await League.findByPk(league)
+    if (clubLeague.lenght <= 0) {
       return res.status(400).json({ message: "Недопустимое значение лиги!" });
     }
 
