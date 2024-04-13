@@ -53,7 +53,7 @@ const Club = sequelize.define(
       },
       set(value) {
         let newRawValue = ''
-        value.map(league => newRawValue + league + '; ')
+        value.map(val => newRawValue += val + '; ')
         this.setDataValue('league', newRawValue)
       }
     },
