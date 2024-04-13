@@ -44,8 +44,18 @@ const Club = sequelize.define(
       allowNull: true,
     },
     league: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: true,
+      get() {
+        const rawValue = this.getDataValue('league');
+        if (rawValue !== null) return rawValue.split(';')
+        return null
+      },
+      set(value) {
+        let newRawValue = ''
+        value.map(league => newRawValue + league + '; ')
+        this.setDataValue('league', newRawValue)
+      }
     },
     accreditation: {
       type: DataTypes.BOOLEAN,
@@ -55,6 +65,6 @@ const Club = sequelize.define(
     timestamps: true,
   }
 );
-Club.belongsTo(User, { foreignKey: "owner" });
+
 
 module.exports = Club;
