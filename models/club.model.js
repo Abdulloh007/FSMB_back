@@ -48,7 +48,7 @@ const Club = sequelize.define(
       allowNull: true,
       get() {
         const rawValue = this.getDataValue('league');
-        if (rawValue !== null) return rawValue.split(';')
+        if (rawValue !== null) return rawValue.split('; ')
         return null
       },
       set(value) {
