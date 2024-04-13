@@ -177,7 +177,7 @@ async function deleteProfile(req, res) {
 async function editProfile(req, res) {
   try {
     const user = req.user;
-    const { name, surname, patronymic, age, city, gender, address, phone, email } = req.body;
+    const { name, surname, patronymic, age, city, gender, address, phone, email, birth } = req.body;
 
     await User.update(
       {
@@ -189,7 +189,8 @@ async function editProfile(req, res) {
         gender,
         address,
         phone, 
-        email
+        email,
+        birth
       },
       { where: { id: user.id } }
     );
@@ -203,6 +204,7 @@ async function editProfile(req, res) {
     user.address = address;
     user.phone = phone;
     user.email = email;
+    user.birth = birth;
 
     const token = await generateToken(user);
     res.status(200).json({ token, msg: "Профиль успешно обновлен" });
