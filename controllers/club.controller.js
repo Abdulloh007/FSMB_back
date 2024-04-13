@@ -7,11 +7,14 @@ async function getClubs(req, res) {
   try {
     const clubs = await Club.findAll();
 
+    
+
     res.status(200).json({ clubs });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function getClubById(req, res) {
   try {
     const clubId = req.params.id;
@@ -25,6 +28,7 @@ async function getClubById(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function newClub(req, res) {
   try {
     const user = req.user;
@@ -50,7 +54,7 @@ async function newClub(req, res) {
 
     const newClub = await Club.create({
       name,
-      city: city,
+      city,
       address,
       description,
       phone,
@@ -63,6 +67,7 @@ async function newClub(req, res) {
     res.status(400).json({ msg: error.message });
   }
 }
+
 async function getAllClubs(req, res) {
   try {
     const { city, name, membersAge, league } = req.query;

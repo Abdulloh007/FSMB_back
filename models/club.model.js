@@ -44,7 +44,7 @@ const Club = sequelize.define(
       allowNull: true,
     },
     league: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
     },
     accreditation: {
