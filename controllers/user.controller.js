@@ -136,7 +136,7 @@ async function getMe(req, res) {
         [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
       }
     });
-    const userClub = Club.findByPk(user.club) 
+    const userClub = await Club.findByPk(user.club) 
 
     delete userData.dataValues["password"]
     if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
