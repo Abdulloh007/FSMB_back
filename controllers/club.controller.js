@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const Club = require("../models/club.model");
 const User = require("../models/user.model");
+const League = require("../models/league.model");
 
 async function getClubs(req, res) {
   try {
@@ -27,23 +28,23 @@ async function getClubById(req, res) {
 async function newClub(req, res) {
   try {
     const user = req.user;
-    const { name, city, address, phone, email, description, league } =
-      req.body;
+    const { name, city, address, phone, email, description, league } = req.body;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
       return res
         .status(400)
         .json({ msg: "Некорректный формат электронной почты" });
     }
 
-    const phoneRegex = /^\+992\d{9}$/;
-    if (!phoneRegex.test(phone)) {
+    if (!isNaN(phone) && phone.lenght > 8 && phone.lenght < 12) {
       return res
         .status(400)
         .json({ msg: "Некорректный формат номера телефона" });
     }
 
-    if (!Object.values(LEAGUE_ENUM).includes(league)) {
+    const clubLeague = await League.findByPk(league)
+    if (!clubLeague) {
       return res.status(400).json({ message: "Недопустимое значение лиги!" });
     }
 
@@ -164,6 +165,7 @@ async function enterToClub(req, res) {
     res.status(500).json({ msg: "Произошла ошибка при вступления в клуб" });
   }
 }
+
 async function leaveClub(req, res) {
   try {
     const userId = req.user.id;
