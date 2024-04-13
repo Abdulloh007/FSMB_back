@@ -179,8 +179,11 @@ async function editProfile(req, res) {
     const user = req.user;
     const { name, surname, patronymic, age, city, gender, address, phone, email, birth } = req.body;
 
+    age = (new Date() - new Date(birth)) / 1000 / 60 / 60 / 24 / 365;
+
     await User.update(
       {
+        age,
         name,
         surname,
         patronymic,
