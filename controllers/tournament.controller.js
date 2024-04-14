@@ -1,5 +1,6 @@
 const Tournament = require("../models/tournament.model");
 const League = require("../models/league.model");
+const User = require("../models/user.model");
 const GenderEnum = {
   MALE: "male",
   FEMALE: "female",
@@ -12,36 +13,46 @@ async function createTournament(req, res) {
       name,
       city,
       address,
-      date,
+      dateFrom,
+      dateTo,
+      applicationDeadline,
       price,
       gender,
       nomination,
       ageFrom,
       ageTo,
       league,
+      secretary
     } = req.body;
 
     if (
       !name ||
       !city ||
       !address ||
-      !date ||
+      !dateFrom ||
+      !dateTo ||
+      !applicationDeadline ||
       !price ||
       !gender ||
       !league ||
       !nomination ||
       !ageFrom ||
-      !ageTo
+      !ageTo ||
+      !secretary
     ) {
       return res.status(400).json({ message: "Все поля обязательны!" });
     }
 
-    const leagueCl = await League.findByPk(league);
-
     if (!Object.values(GenderEnum).includes(gender)) {
       return res.status(400).json({ message: "Недопустимое значение пола!" });
     }
-    if (leagueCl === null) {
+    const secretaryUser = await User.findByPk(secretary)
+
+    if (!secretaryUser) {
+      return res.status(400).json({ message: "Недопустимое значение пола!" });
+    }
+
+    if (league === null) {
       return res.status(400).json({ message: "Недопустимое значение лиги!" });
     }
 
@@ -49,7 +60,9 @@ async function createTournament(req, res) {
       name,
       city,
       address,
-      date,
+      dateFrom,
+      dateTo,
+      applicationDeadline,
       price,
       gender,
       nomination,
@@ -57,11 +70,16 @@ async function createTournament(req, res) {
       ageTo,
       league,
       owner: userId,
+      secretary
     });
+
     res.status(200).json({ message: "Успешно создано!", data: newTournament });
+
   } catch (error) {
+    
     console.log(error);
     res.status(400).json({ message: "Не удалось создать турнир!" });
+
   }
 }
 async function getAllTournaments(req, res) {
