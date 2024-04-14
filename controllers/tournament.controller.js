@@ -5,13 +5,17 @@ const GenderEnum = {
   MALE: "male",
   FEMALE: "female",
 };
+const typeEnum = ['regional', 'city', 'international']
+const gridViewEnum = ['e2e', 'knock-out']
 
 async function createTournament(req, res) {
   try {
     const userId = req.user.id;
     const {
       name,
+      type,
       city,
+      gridView,
       address,
       dateFrom,
       dateTo,
@@ -27,7 +31,9 @@ async function createTournament(req, res) {
 
     if (
       !name ||
+      !type ||
       !city ||
+      !gridView ||
       !address ||
       !dateFrom ||
       !dateTo ||
@@ -43,13 +49,20 @@ async function createTournament(req, res) {
       return res.status(400).json({ message: "Все поля обязательны!" });
     }
 
+    if (!typeEnum.includes(type)) {
+      return res.status(400).json({ message: "Недопустимое значение поля!" });
+    }
+    if (!gridViewEnum.includes(gridView)) {
+      return res.status(400).json({ message: "Недопустимое значение поля!" });
+    }
+    
     if (!Object.values(GenderEnum).includes(gender)) {
-      return res.status(400).json({ message: "Недопустимое значение пола!" });
+      return res.status(400).json({ message: "Недопустимое значение поля!" });
     }
     const secretaryUser = await User.findByPk(secretary)
 
     if (!secretaryUser) {
-      return res.status(400).json({ message: "Недопустимое значение пола!" });
+      return res.status(400).json({ message: "Недопустимое значение поля!" });
     }
 
     if (league === null) {
@@ -58,7 +71,9 @@ async function createTournament(req, res) {
 
     const newTournament = await Tournament.create({
       name,
+      type,
       city,
+      gridView,
       address,
       dateFrom,
       dateTo,

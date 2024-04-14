@@ -20,6 +20,14 @@ const Tournament = sequelize.define("tournaments", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  type: {
+    type: DataTypes.ENUM('regional', 'city', 'international'),
+    allowNull: false
+  },
+  gridView: {
+    type: DataTypes.ENUM('e2e', 'knock-out'),
+    allowNull: false
+  },
   price: {
     type: DataTypes.FLOAT,
     allowNull: false,
