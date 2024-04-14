@@ -14,12 +14,8 @@ const Application = sequelize.define("applications", {
     allowNull: false,
   },
   tournamentId: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: "tournaments",
-      key: "id",
-    },
   },
   status: {
     type: DataTypes.ENUM("pending", "approved", "rejected"),
