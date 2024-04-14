@@ -13,7 +13,7 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   city: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   address: {
@@ -29,6 +29,10 @@ const Tournament = sequelize.define("tournaments", {
     allowNull: false,
   },
   owner: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  secretary: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -48,9 +52,31 @@ const Tournament = sequelize.define("tournaments", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  dateFrom: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  dateTo: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  applicationDeadline: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
   league: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+    type: DataTypes.STRING,
+    allowNull: true,
+    get() {
+      const rawValue = this.getDataValue('league');
+      if (rawValue !== null) return rawValue.split('; ').map(id => parseInt(id))
+      return null
+    },
+    set(value) {
+      let newRawValue = ''
+      value.map((val, idx) => idx + 1 !== value.length ? newRawValue += val + '; ' : newRawValue += val)
+      this.setDataValue('league', newRawValue)
+    }
   },
   first_place: {
     type: DataTypes.INTEGER,
