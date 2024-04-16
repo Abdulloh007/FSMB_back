@@ -12,13 +12,11 @@ async function createApplication(req, res) {
     try {
         const userId = req.user.id;
         const {
-            applier,
             tournamentId,
             status
         } = req.body;
 
         if (
-            !applier ||
             !tournamentId
         ) {
             return res.status(400).json({ message: "Все поля обязательны!", payload: req.body });
@@ -41,7 +39,7 @@ async function createApplication(req, res) {
         }
 
         const newApplication = await Application.create({
-            applier,
+            applier: userId,
             tournamentId,
             status
         });
