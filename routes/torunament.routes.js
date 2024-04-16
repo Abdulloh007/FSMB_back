@@ -9,6 +9,7 @@ router.post(
   tournamentController.createTournament
 );
 router.get("/tournaments", checkAuth, tournamentController.getAllTournaments);
+router.get("/my-tournaments", checkAuth, tournamentController.getMyTournaments);
 router.put("/tournament/:id", checkAuth, tournamentController.updateTournament);
 router.delete(
   "/tournament/:id",

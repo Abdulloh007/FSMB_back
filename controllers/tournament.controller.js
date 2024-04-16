@@ -137,6 +137,41 @@ async function getAllTournaments(req, res) {
   }
 }
 
+async function getMyTournaments(req, res) {
+  try {
+    const { city, gender, nomination, ageFrom, ageTo, league } = req.query;
+    let filter = {};
+
+    if (city) {
+      filter.city = city;
+    }
+
+    if (gender && Object.values(GenderEnum).includes(gender)) {
+      filter.gender = gender;
+    }
+
+    if (nomination) {
+      filter.nomination = nomination;
+    }
+    if (league) {
+      filter.league = league;
+    }
+    if (ageFrom) {
+      filter.ageFrom = ageFrom;
+    }
+
+    if (ageTo) {
+      filter.ageTo = ageTo;
+    }
+
+
+    const tournaments = await Tournament.findAll({ where: {...filter, owner: req.user.id} });
+    res.status(200).json({ data: tournaments });
+  } catch (error) {
+    res.status(400).json({ message: "Не удалось получить турниры!" });
+  }
+}
+
 async function updateTournament(req, res) {
   try {
     const tournamentId = req.params.id;
@@ -238,6 +273,7 @@ async function deleteTournament(req, res) {
 module.exports = {
   createTournament,
   getAllTournaments,
+  getMyTournaments,
   updateTournament,
   deleteTournament,
 };
