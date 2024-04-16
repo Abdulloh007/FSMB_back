@@ -26,7 +26,8 @@ async function createTournament(req, res) {
       ageFrom,
       ageTo,
       league,
-      secretary
+      secretary,
+      weightCat
     } = req.body;
 
     if (
@@ -44,9 +45,10 @@ async function createTournament(req, res) {
       !nomination ||
       !ageFrom ||
       !ageTo ||
-      !secretary
+      !secretary ||
+      !weightCat
     ) {
-      return res.status(400).json({ message: "Все поля обязательны!" });
+      return res.status(400).json({ message: "Все поля обязательны!", payload: req.body});
     }
 
     if (!typeEnum.includes(type)) {

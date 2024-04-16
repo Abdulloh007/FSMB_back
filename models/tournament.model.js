@@ -82,6 +82,10 @@ const Tournament = sequelize.define("tournaments", {
       this.setDataValue('league', newRawValue)
     }
   },
+  weightCat: {
+    type: DataTypes.ENUM('light, heavy'),
+    allowNull: true
+  },
   first_place: {
     type: DataTypes.INTEGER,
     allowNull: true,
