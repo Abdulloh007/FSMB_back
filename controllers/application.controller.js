@@ -25,12 +25,6 @@ async function createApplication(req, res) {
         if (status && !statusEnum.includes(status)) {
             return res.status(400).json({ message: "Недопустимое значение поля!" });
         }
-
-        const applierUser = await User.findByPk(applier)
-
-        if (!applierUser) {
-            return res.status(400).json({ message: "Недопустимое значение поля!" });
-        }
         
         const applyingTournament = await Tournament.findByPk(tournamentId)
 
@@ -44,7 +38,7 @@ async function createApplication(req, res) {
             status
         });
 
-        res.status(200).json({ message: "Успешно создано!", data: newTournament });
+        res.status(200).json({ message: "Успешно создано!", data: newApplication });
 
     } catch (error) {
 
