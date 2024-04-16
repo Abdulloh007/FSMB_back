@@ -101,7 +101,7 @@ async function createTournament(req, res) {
 }
 async function getAllTournaments(req, res) {
   try {
-    const { city, gender, nomination, ageFrom, ageTo, league } = req.query;
+    const { city, gender, nomination, ageFrom, ageTo, league, owner } = req.query;
     let filter = {};
 
     if (city) {
@@ -124,6 +124,10 @@ async function getAllTournaments(req, res) {
 
     if (ageTo) {
       filter.ageTo = ageTo;
+    }
+
+    if (owner) {
+      filter.owner = owner;
     }
 
     const tournaments = await Tournament.findAll({ where: filter });
