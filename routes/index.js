@@ -9,6 +9,7 @@ const anthropometryRouter = require("./anthropometry.routes");
 const tournamentRouter = require("./torunament.routes");
 const leagueRouter = require("./league.routes");
 const categoryRouter = require("./category.routes");
+const applicationRouter = require("./application.router");
 
 router.use("/", userRouter);
 router.use("/", clubRouter);
@@ -18,5 +19,6 @@ router.use("/", anthropometryRouter);
 router.use("/", tournamentRouter);
 router.use("/", leagueRouter);
 router.use("/", categoryRouter);
+router.use("/", applicationRouter);
 
 module.exports = router;

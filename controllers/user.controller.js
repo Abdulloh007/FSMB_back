@@ -136,7 +136,7 @@ async function getMe(req, res) {
         [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
       }
     });
-    const userClub = await Club.findByPk(user.club) 
+    const userClub = await Club.findByPk(user.club)
 
     delete userData.dataValues["password"]
     if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
@@ -145,9 +145,36 @@ async function getMe(req, res) {
       return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
     })
 
-    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers, club: userClub});
+    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers, club: userClub });
 
   } catch (error) { }
+}
+
+async function getAllSportsmens(req, res) {
+  try {
+    const user = req.user;
+    const userData = await User.findAll();
+    let sportsmens = []
+
+    userData.map(sportsman => {
+      // const userBlub = Club.findByPk(sportsman.club)
+      if (sportsman.photo === null) sportsman.photo = 'default_avatar.png'
+      sportsmens.push({
+        name: sportsman.name,
+        surname: sportsman.surname,
+        patronymic: sportsman.patronymic,
+        city: sportsman.city,
+        age: sportsman.age,
+        club: sportsman.club,
+      })
+    })
+
+
+    res.status(200).json({ sportsmens });
+
+  } catch (error) {
+    res.status(400).json({ msg: error })
+  }
 }
 
 async function getById(req, res) {
@@ -301,5 +328,6 @@ module.exports = {
   deleteProfile,
   editProfile,
   changeUserRole,
-  searchUser
+  searchUser,
+  getAllSportsmens
 };
