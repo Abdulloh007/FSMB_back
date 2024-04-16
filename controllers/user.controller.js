@@ -160,12 +160,14 @@ async function getAllSportsmens(req, res) {
       // const userBlub = Club.findByPk(sportsman.club)
       if (sportsman.photo === null) sportsman.photo = 'default_avatar.png'
       sportsmens.push({
+        id: sportsman.id,
         name: sportsman.name,
         surname: sportsman.surname,
         patronymic: sportsman.patronymic,
         city: sportsman.city,
         age: sportsman.age,
         club: sportsman.club,
+        rate: sportsman.rating
       })
     })
 
