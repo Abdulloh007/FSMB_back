@@ -83,7 +83,7 @@ const Tournament = sequelize.define("tournaments", {
     }
   },
   weightCat: {
-    type: DataTypes.ENUM('light, heavy'),
+    type: DataTypes.ENUM('light', 'heavy'),
     allowNull: true
   },
   first_place: {
@@ -104,4 +104,31 @@ const Tournament = sequelize.define("tournaments", {
   },
 });
 
-module.exports = Tournament;
+
+
+
+const Application = sequelize.define("applications", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  applier: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  // tournamentId: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  // },
+  status: {
+    type: DataTypes.ENUM("pending", "approved", "rejected"),
+    allowNull: false,
+    defaultValue: "pending",
+  },
+});
+
+Tournament.hasMany(Application);
+Application.belongsTo(Tournament);
+module.exports = {Tournament, Application};

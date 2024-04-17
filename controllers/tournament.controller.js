@@ -1,4 +1,4 @@
-const Tournament = require("../models/tournament.model");
+const {Tournament} = require("../models/tournament.model");
 const League = require("../models/league.model");
 const User = require("../models/user.model");
 const GenderEnum = {

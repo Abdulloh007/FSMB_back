@@ -1,7 +1,7 @@
-const Tournament = require("../models/tournament.model");
+const {Tournament} = require("../models/tournament.model");
 const League = require("../models/league.model");
 const User = require("../models/user.model");
-const Application = require("../models/application.model");
+const {Application} = require("../models/tournament.model");
 const GenderEnum = {
     MALE: "male",
     FEMALE: "female",
@@ -65,14 +65,14 @@ async function getAllApplications(req, res) {
             filter.status = status;
         }
 
-        const applications = await Application.findAll({ where: filter });
+        const applications = await Application.findAll({ where: filter, include: Tournament });
         res.status(200).json({ data: applications });
     } catch (error) {
-        res.status(400).json({ message: "Не удалось получить турниры!" });
+        res.status(400).json({ message: error });
     }
 }
 
-function getMyApplications(req, res) {
+async function getMyApplications(req, res) {
     try {
         const { tournamentId, status } = req.query;
         let filter = {};
@@ -85,7 +85,7 @@ function getMyApplications(req, res) {
             filter.status = status;
         }
 
-        const applications = Application.findAll({ where: {...filter, applier: userId} });
+        const applications = await Application.findAll({ where: {...filter, applier: userId} });
         res.status(200).json({ data: applications });
     } catch (error) {
         res.status(400).json({ message: "Не удалось получить турниры!" });
