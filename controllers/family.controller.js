@@ -28,7 +28,7 @@ async function getFamily(req, res) {
     return res.status(200).json(families);
   } catch (error) {
     return res
-      .status(500)
+      .status(409)
       .json({ error: "Ошибка при получении данных о семье: " + error.message });
   }
 }
@@ -40,7 +40,7 @@ async function addFamily(req, res) {
 
     if (!Object.values(RelationshipType).includes(relationship)) {
       return res
-        .status(400)
+        .status(409)
         .json({ error: "Предоставлен недопустимый тип отношений." });
     }
 
@@ -64,7 +64,7 @@ async function addFamily(req, res) {
     return res.status(201).json(newFamily);
   } catch (error) {
     return res
-      .status(500)
+      .status(409)
       .json({ error: "Ошибка при добавлении члена семьи: " + error.message });
   }
 }
@@ -91,7 +91,7 @@ async function removeFamily(req, res) {
       .json({ message: "Член семьи успешно удален." });
   } catch (error) {
     return res
-      .status(500)
+      .status(409)
       .json({ error: "Ошибка при удалении члена семьи: " + error.message });
   }
 }

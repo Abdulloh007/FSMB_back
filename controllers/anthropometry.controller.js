@@ -10,7 +10,7 @@ async function createAnthropometry(req, res) {
     });
 
     if (existingAnthropometry) {
-      return res.status(400).json({ msg: "Антропометрия уже существует" });
+      return res.status(400).json({ error: "Антропометрия уже существует" });
     }
 
     const newAnthropometry = await Anthropometry.create({
@@ -23,9 +23,9 @@ async function createAnthropometry(req, res) {
       helmet,
     });
 
-    res.status(201).json({ msg: "Антропометрия успешно создана" });
+    res.status(201).json({ message: "Антропометрия успешно создана" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -39,7 +39,7 @@ async function updateAnthropometry(req, res) {
     });
 
     if (!existingAnthropometry) {
-      return res.status(404).json({ msg: "Антропометрия не найдена" });
+      return res.status(404).json({ error: "Антропометрия не найдена" });
     }
 
     await existingAnthropometry.update({
@@ -51,11 +51,12 @@ async function updateAnthropometry(req, res) {
       helmet,
     });
 
-    res.status(200).json({ msg: "Антропометрия успешно обновлена" });
+    res.status(200).json({ message: "Антропометрия успешно обновлена" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
+
 async function getAnthropometry(req, res) {
   try {
     const userId = req.user.id;
@@ -65,12 +66,12 @@ async function getAnthropometry(req, res) {
     });
 
     if (!anthropometry) {
-      return res.status(404).json({ msg: "Антропометрия не найдена" });
+      return res.status(404).json({ error: "Антропометрия не найдена" });
     }
 
     res.status(200).json(anthropometry);
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 module.exports = {

@@ -18,7 +18,7 @@ async function createCategory(req, res) {
         res.status(200).json({ message: "Успешно создано!", data: newCategory });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось создать категорию!" })
+        res.status(400).json({ error: "Не удалось создать категорию!" })
     }
 }
 
@@ -38,7 +38,7 @@ async function getAllCategories(req, res) {
         res.status(200).json({ data: categories });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось поучить категорию!" });
+        res.status(400).json({ error: "Не удалось поучить категорию!" });
     }
 }
 
@@ -49,7 +49,7 @@ async function updateCategory(req, res) {
         const category = await Category.findByPk(categoryId);
 
         if (!category) {
-            return res.status(404).json({ message: "Категория не найдена!" });
+            return res.status(404).json({ error: "Категория не найдена!" });
         }
 
         const {
@@ -70,7 +70,7 @@ async function updateCategory(req, res) {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось обновить категорию!" });
+        res.status(400).json({ error: "Не удалось обновить категорию!" });
     }
 }
 
@@ -81,7 +81,7 @@ async function deleteCategory(req, res) {
 
         const category = await Category.findByPk(categoryId);
         if (!category) {
-            return res.status(404).json({ message: "Категория не найдена!" });
+            return res.status(404).json({ error: "Категория не найдена!" });
         }
 
         await Category.destroy({
@@ -91,7 +91,7 @@ async function deleteCategory(req, res) {
         res.status(200).json({ message: "Успешно удалено!" });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось удалить лига!" });
+        res.status(400).json({ error: "Не удалось удалить лига!" });
     }
 }
 

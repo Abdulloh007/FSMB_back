@@ -48,27 +48,27 @@ async function createTournament(req, res) {
       !secretary ||
       !weightCat
     ) {
-      return res.status(400).json({ message: "Все поля обязательны!", payload: req.body});
+      return res.status(400).json({ error: "Все поля обязательны!", payload: req.body});
     }
 
     if (!typeEnum.includes(type)) {
-      return res.status(400).json({ message: "Недопустимое значение поля!" });
+      return res.status(400).json({ error: "Недопустимое значение поля!" });
     }
     if (!gridViewEnum.includes(gridView)) {
-      return res.status(400).json({ message: "Недопустимое значение поля!" });
+      return res.status(400).json({ error: "Недопустимое значение поля!" });
     }
     
     if (!Object.values(GenderEnum).includes(gender)) {
-      return res.status(400).json({ message: "Недопустимое значение поля!" });
+      return res.status(400).json({ error: "Недопустимое значение поля!" });
     }
     const secretaryUser = await User.findByPk(secretary)
 
     if (!secretaryUser) {
-      return res.status(400).json({ message: "Недопустимое значение поля!" });
+      return res.status(400).json({ error: "Недопустимое значение поля!" });
     }
 
     if (league === null) {
-      return res.status(400).json({ message: "Недопустимое значение лиги!" });
+      return res.status(400).json({ error: "Недопустимое значение лиги!" });
     }
 
     const newTournament = await Tournament.create({
@@ -95,7 +95,7 @@ async function createTournament(req, res) {
   } catch (error) {
     
     console.log(error);
-    res.status(400).json({ message: "Не удалось создать турнир!" });
+    res.status(400).json({ error: "Не удалось создать турнир!" });
 
   }
 }
@@ -133,7 +133,7 @@ async function getAllTournaments(req, res) {
     const tournaments = await Tournament.findAll({ where: filter });
     res.status(200).json({ data: tournaments });
   } catch (error) {
-    res.status(400).json({ message: "Не удалось получить турниры!" });
+    res.status(400).json({ error: "Не удалось получить турниры!" });
   }
 }
 
@@ -168,7 +168,7 @@ async function getMyTournaments(req, res) {
     const tournaments = await Tournament.findAll({ where: {...filter, owner: req.user.id} });
     res.status(200).json({ data: tournaments });
   } catch (error) {
-    res.status(400).json({ message: "Не удалось получить турниры!" });
+    res.status(409).json({ error: "Не удалось получить турниры!" });
   }
 }
 
@@ -179,13 +179,13 @@ async function updateTournament(req, res) {
     const tournament = await Tournament.findByPk(tournamentId);
     
     if (!tournament) {
-      return res.status(404).json({ message: "Турнир не найден!" });
+      return res.status(404).json({ error: "Турнир не найден!" });
     }
 
     if (parseInt(tournament.owner) !== userId) {
       return res
         .status(403)
-        .json({ message: "Нет прав для обновления этого турнира!" });
+        .json({ error: "Нет прав для обновления этого турнира!" });
     }
 
     const {
@@ -213,11 +213,11 @@ async function updateTournament(req, res) {
       !ageFrom ||
       !ageTo
     ) {
-      return res.status(400).json({ message: "Все поля обязательны!" });
+      return res.status(400).json({ error: "Все поля обязательны!" });
     }
 
     if (!Object.values(GenderEnum).includes(gender)) {
-      return res.status(400).json({ message: "Недопустимое значение пола!" });
+      return res.status(400).json({ error: "Недопустимое значение пола!" });
     }
 
     await Tournament.update(
@@ -239,7 +239,7 @@ async function updateTournament(req, res) {
     res.status(200).json({ message: "Успешно обновлено!" });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Не удалось обновить турнир!" });
+    res.status(400).json({ error: "Не удалось обновить турнир!" });
   }
 }
 
@@ -250,13 +250,13 @@ async function deleteTournament(req, res) {
 
     const tournament = await Tournament.findByPk(tournamentId);
     if (!tournament) {
-      return res.status(404).json({ message: "Турнир не найден!" });
+      return res.status(404).json({ error: "Турнир не найден!" });
     }
 
     if (parseInt(tournament.owner) !== userId) {
       return res
         .status(403)
-        .json({ message: "Нет прав для удаления этого турнира!" });
+        .json({ error: "Нет прав для удаления этого турнира!" });
     }
 
     await Tournament.destroy({
@@ -266,7 +266,7 @@ async function deleteTournament(req, res) {
     res.status(200).json({ message: "Успешно удалено!" });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Не удалось удалить турнир!" });
+    res.status(400).json({ error: "Не удалось удалить турнир!" });
   }
 }
 

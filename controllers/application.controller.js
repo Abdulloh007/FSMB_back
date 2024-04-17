@@ -19,22 +19,22 @@ async function createApplication(req, res) {
         if (
             !tournamentId
         ) {
-            return res.status(400).json({ message: "Все поля обязательны!", payload: req.body });
+            return res.status(400).json({ error: "Все поля обязательны!", payload: req.body });
         }
         const existed = await Application.findOne({ where: { applier: userId, tournamentId: tournamentId }})
         
         if (existed) {
-            return res.status(400).json({ message: "Вы уже подали заявку на этот турнир!", payload: req.body });
+            return res.status(409).json({ error: "Вы уже подали заявку на этот турнир!", payload: req.body });
         }
 
         if (status && !statusEnum.includes(status)) {
-            return res.status(400).json({ message: "Недопустимое значение поля!" });
+            return res.status(400).json({ error: "Недопустимое значение поля!" });
         }
         
         const applyingTournament = await Tournament.findByPk(tournamentId)
 
         if (!applyingTournament) {
-            return res.status(400).json({ message: "Недопустимое значение поля!" });
+            return res.status(400).json({ error: "Недопустимое значение поля!" });
         }
 
         const newApplication = await Application.create({
@@ -48,7 +48,7 @@ async function createApplication(req, res) {
     } catch (error) {
 
         console.log(error);
-        res.status(400).json({ message: "Не удалось создать заявку!" });
+        res.status(409).json({ error: "Не удалось создать заявку!" });
 
     }
 }
@@ -73,7 +73,7 @@ async function getAllApplications(req, res) {
         const applications = await Application.findAll({ where: filter, include: Tournament });
         res.status(200).json({ data: applications });
     } catch (error) {
-        res.status(400).json({ message: error });
+        res.status(400).json({ error: error });
     }
 }
 
@@ -93,7 +93,7 @@ async function getMyApplications(req, res) {
         const applications = await Application.findAll({ where: {...filter, applier: userId}, include: Tournament });
         res.status(200).json({ data: applications });
     } catch (error) {
-        res.status(400).json({ message: "Не удалось получить турниры!" });
+        res.status(400).json({ error: "Не удалось получить турниры!" });
     }
 }
 
@@ -105,13 +105,13 @@ async function updateApplication(req, res) {
         const application = await Application.findByPk(applicationId);
 
         if (!application) {
-            return res.status(404).json({ message: "Турнир не найден!" });
+            return res.status(404).json({ error: "Турнир не найден!" });
         }
 
         if (parseInt(application.applier) !== userId) {
             return res
                 .status(403)
-                .json({ message: "Нет прав для обновления этого турнира!" });
+                .json({ error: "Нет прав для обновления этого турнира!" });
         }
 
         const {
@@ -123,11 +123,11 @@ async function updateApplication(req, res) {
             !tournamentId ||
             !status
         ) {
-            return res.status(400).json({ message: "Все поля обязательны!" });
+            return res.status(400).json({ error: "Все поля обязательны!" });
         }
 
         if (!statusEnum.includes(status)) {
-            return res.status(400).json({ message: "Недопустимое значение пола!" });
+            return res.status(409).json({ error: "Недопустимое значение пола!" });
         }
 
         await Application.update(
@@ -140,7 +140,7 @@ async function updateApplication(req, res) {
         res.status(200).json({ message: "Успешно обновлено!" });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось обновить турнир!" });
+        res.status(409).json({ error: "Не удалось обновить турнир!" });
     }
 }
 
@@ -151,13 +151,13 @@ async function deleteApplication(req, res) {
 
         const application = await Application.findByPk(applicationId);
         if (!application) {
-            return res.status(404).json({ message: "Турнир не найден!" });
+            return res.status(404).json({ error: "Турнир не найден!" });
         }
 
         if (parseInt(application.applier) !== userId) {
             return res
                 .status(403)
-                .json({ message: "Нет прав для удаления этого турнира!" });
+                .json({ error: "Нет прав для удаления этого турнира!" });
         }
 
         await Application.destroy({
@@ -167,7 +167,7 @@ async function deleteApplication(req, res) {
         res.status(200).json({ message: "Успешно удалено!" });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось удалить турнир!" });
+        res.status(400).json({ error: "Не удалось удалить турнир!" });
     }
 }
 

@@ -11,7 +11,7 @@ async function getClubs(req, res) {
 
     res.status(200).json({ clubs });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -25,7 +25,7 @@ async function getClubById(req, res) {
     });
     res.status(200).json({ club });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -38,17 +38,17 @@ async function newClub(req, res) {
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ msg: "Некорректный формат электронной почты" });
+        .json({ error: "Некорректный формат электронной почты" });
     }
 
     if (!isNaN(phone) && phone.lenght > 8 && phone.lenght < 12) {
       return res
         .status(400)
-        .json({ msg: "Некорректный формат номера телефона" });
+        .json({ error: "Некорректный формат номера телефона" });
     }
 
     if (league.lenght <= 0) {
-      return res.status(400).json({ message: "Недопустимое значение лиги!" });
+      return res.status(400).json({ error: "Недопустимое значение лиги!" });
     }
 
     const newClub = await Club.create({
@@ -63,7 +63,7 @@ async function newClub(req, res) {
     });
     res.status(200).json({ club: newClub, msg: "Клуб успешно создан" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -89,7 +89,7 @@ async function getAllClubs(req, res) {
     const clubs = await Club.findAll({ where: filter });
     res.status(200).json({ clubs });
   } catch (error) {
-    res.status(500).json({ msg: "Произошла ошибка при получении клубов" });
+    res.status(409).json({ error: "Произошла ошибка при получении клубов" });
   }
 }
 
@@ -99,19 +99,19 @@ async function deleteClub(req, res) {
     const club = await Club.findByPk(clubId);
 
     if (!club) {
-      return res.status(404).json({ msg: "Клуб не найден" });
+      return res.status(404).json({ error: "Клуб не найден" });
     }
 
     if (req.user.id !== club.owner) {
       return res
         .status(403)
-        .json({ msg: "Недостаточно прав для удаления клуба" });
+        .json({ error: "Недостаточно прав для удаления клуба" });
     }
 
     await club.destroy();
-    res.status(200).json({ msg: "Клуб успешно удален" });
+    res.status(200).json({ message: "Клуб успешно удален" });
   } catch (error) {
-    res.status(500).json({ msg: "Произошла ошибка при удалении клуба" });
+    res.status(409).json({ error: "Произошла ошибка при удалении клуба" });
   }
 }
 
@@ -123,13 +123,13 @@ async function editClub(req, res) {
     const club = await Club.findByPk(clubId);
 
     if (!club) {
-      return res.status(404).json({ msg: "Клуб не найден" });
+      return res.status(404).json({ error: "Клуб не найден" });
     }
 
     if (req.user.id !== club.owner) {
       return res
         .status(403)
-        .json({ msg: "Недостаточно прав для редактирования клуба" });
+        .json({ error: "Недостаточно прав для редактирования клуба" });
     }
 
     club.name = name;
@@ -142,9 +142,9 @@ async function editClub(req, res) {
 
     await club.save();
 
-    res.status(200).json({ club, msg: "Клуб успешно отредактирован" });
+    res.status(200).json({ club, message: "Клуб успешно отредактирован" });
   } catch (error) {
-    res.status(500).json({ msg: "Произошла ошибка при редактировании клуба" });
+    res.status(409).json({ error: "Произошла ошибка при редактировании клуба" });
   }
 }
 
@@ -163,10 +163,10 @@ async function enterToClub(req, res) {
 
     await user.save();
 
-    res.status(200).json({ msg: "Пользователь успешно вступил в клуб" });
+    res.status(200).json({ message: "Пользователь успешно вступил в клуб" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: "Произошла ошибка при вступления в клуб" });
+    res.status(409).json({ error: "Произошла ошибка при вступления в клуб" });
   }
 }
 
@@ -184,17 +184,17 @@ async function leaveClub(req, res) {
     if (user.club !== clubId) {
       return res
         .status(400)
-        .json({ msg: "Пользователь не находится в этом клубе" });
+        .json({ error: "Пользователь не находится в этом клубе" });
     }
 
     user.club = null;
 
     await user.save();
 
-    res.status(200).json({ msg: "Пользователь успешно покинул клуб" });
+    res.status(200).json({ message: "Пользователь успешно покинул клуб" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: "Произошла ошибка при покидании клуба" });
+    res.status(409).json({ error: "Произошла ошибка при покидании клуба" });
   }
 }
 

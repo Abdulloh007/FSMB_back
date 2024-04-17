@@ -27,13 +27,13 @@ async function createUser(req, res) {
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ msg: "Некорректный формат электронной почты" });
+        .json({ error: "Некорректный формат электронной почты" });
     }
 
     if (!isNaN(phone) && phone.lenght > 8 && phone.lenght < 12) {
       return res
         .status(400)
-        .json({ msg: "Некорректный формат номера телефона" });
+        .json({ error: "Некорректный формат номера телефона" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 8);
@@ -45,7 +45,7 @@ async function createUser(req, res) {
 
     if (existingUser) {
       return res.status(400).json({
-        msg: "Пользователь с таким email или телефоном уже существует",
+        error: "Пользователь с таким email или телефоном уже существует",
       });
     }
     const newUser = await User.create({
@@ -65,9 +65,9 @@ async function createUser(req, res) {
       userId: newUser.id
     });
 
-    res.status(201).json({ msg: "Пользователь успешно создан!" });
+    res.status(201).json({ message: "Пользователь успешно создан!" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -77,19 +77,19 @@ async function loginUser(req, res) {
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({ msg: "Пользователь не найден" });
+      return res.status(404).json({ error: "Пользователь не найден" });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(401).json({ msg: "Неверный пароль" });
+      return res.status(401).json({ error: "Неверный пароль" });
     }
 
     const token = await generateToken(user);
 
-    res.status(200).json({ token, msg: "Успешный вход в систему" });
+    res.status(200).json({ token, message: "Успешный вход в систему" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -103,12 +103,12 @@ async function uploadUserPhoto(req, res) {
       user = decoded;
     } catch (error) {
       return res.status(403).json({
-        msg: "Нет доступа",
+        error: "Нет доступа",
       });
     }
   } else {
     return res.status(403).json({
-      msg: "Нет доступа",
+      error: "Нет доступа",
     });
   }
 
@@ -119,7 +119,7 @@ async function uploadUserPhoto(req, res) {
     User.update({ photo: req.file.filename }, { where: { id: user.id } })
     res.status(200).json({ message: 'Успешно обновлен', filename: req.file.filename });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 
 }
@@ -147,7 +147,9 @@ async function getMe(req, res) {
 
     res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers, club: userClub });
 
-  } catch (error) { }
+  } catch (error) {
+    res.status(409).json({ error: error })
+  }
 }
 
 async function getAllSportsmens(req, res) {
@@ -175,7 +177,7 @@ async function getAllSportsmens(req, res) {
     res.status(200).json({ sportsmens });
 
   } catch (error) {
-    res.status(400).json({ msg: error })
+    res.status(409).json({ error: error })
   }
 }
 
@@ -190,7 +192,9 @@ async function getById(req, res) {
       surname: userData.surname,
     });
 
-  } catch (error) { }
+  } catch (error) { 
+    res.status(409).json({ error: error })
+  }
 }
 
 async function deleteProfile(req, res) {
@@ -199,9 +203,9 @@ async function deleteProfile(req, res) {
 
     await User.destroy({ where: { id: user.id } });
 
-    res.status(200).json({ msg: "Профиль успешно удален" });
+    res.status(200).json({ message: "Профиль успешно удален" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(409).json({ error: error.message });
   }
 }
 
@@ -243,7 +247,7 @@ async function editProfile(req, res) {
     const token = await generateToken(user);
     res.status(200).json({ token, msg: "Профиль успешно обновлен" });
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -252,17 +256,17 @@ async function changeUserRole(req, res) {
     const { userId, role, action } = req.body;
     if (!req.user || !req.user.roles.includes("admin")) {
       return res.status(403).json({
-        msg: "Только администратор может изменять роли пользователей",
+        error: "Только администратор может изменять роли пользователей",
       });
     }
 
     const user = await User.findOne({ where: { id: userId } });
     if (!user) {
-      return res.status(404).json({ msg: "Пользователь не найден" });
+      return res.status(404).json({ error: "Пользователь не найден" });
     }
 
     if (!UserRoleEnum.includes(role)) {
-      return res.status(400).json({ msg: "Указана некорректная роль" });
+      return res.status(400).json({ error: "Указана некорректная роль" });
     }
 
     let existingRole = await UserRole.findOne({
@@ -276,7 +280,7 @@ async function changeUserRole(req, res) {
       if (existingRole) {
         return res
           .status(400)
-          .json({ msg: "У пользователя уже есть эта роль" });
+          .json({ error: "У пользователя уже есть эта роль" });
       }
 
       const newUserRole = await UserRole.create({
@@ -286,22 +290,22 @@ async function changeUserRole(req, res) {
 
       return res
         .status(200)
-        .json({ msg: "Роль успешно добавлена пользователю" });
+        .json({ message: "Роль успешно добавлена пользователю" });
     } else if (action === "remove") {
       if (!existingRole) {
-        return res.status(400).json({ msg: "У пользователя нет этой роли" });
+        return res.status(400).json({ error: "У пользователя нет этой роли" });
       }
 
       await existingRole.destroy();
 
       return res
         .status(200)
-        .json({ msg: "Роль успешно удалена у пользователя" });
+        .json({ message: "Роль успешно удалена у пользователя" });
     } else {
-      return res.status(400).json({ msg: "Некорректное действие" });
+      return res.status(400).json({ error: "Некорректное действие" });
     }
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -316,7 +320,7 @@ async function searchUser(req, res) {
     res.status(200).json({ ...userData.dataValues });
 
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    res.status(400).json({ error: error.message });
   }
 }
 

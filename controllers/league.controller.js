@@ -20,7 +20,7 @@ async function createLeague(req, res) {
         res.status(200).json({ message: "Успешно создано!", data: newLeague });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "не удалось создать лигу!" })
+        res.status(400).json({ error: "Не удалось создать лигу!" })
     }
 }
 
@@ -41,7 +41,7 @@ async function getAllLeagues(req, res) {
         res.status(200).json({ data: leagues });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось поучить лиги!" });
+        res.status(400).json({ error: "Не удалось поучить лиги!" });
     }
 }
 
@@ -52,7 +52,7 @@ async function updateLeague(req, res) {
         const league = await League.findByPk(leagueId);
 
         if (!league) {
-            return res.status(404).json({ message: "Лига не найдена!" });
+            return res.status(404).json({ error: "Лига не найдена!" });
         }
 
         const {
@@ -75,7 +75,7 @@ async function updateLeague(req, res) {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось обновить лигу!" });
+        res.status(400).json({ error: "Не удалось обновить лигу!" });
     }
 }
 
@@ -86,7 +86,7 @@ async function deleteLeague(req, res) {
 
         const league = await League.findByPk(leagueId);
         if (!league) {
-            return res.status(404).json({ message: "Лига не найден!" });
+            return res.status(404).json({ error: "Лига не найден!" });
         }
 
         await League.destroy({
@@ -96,7 +96,7 @@ async function deleteLeague(req, res) {
         res.status(200).json({ message: "Успешно удалено!" });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Не удалось удалить лигу!" });
+        res.status(400).json({ error: "Не удалось удалить лигу!" });
     }
 }
 
