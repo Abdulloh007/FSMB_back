@@ -85,7 +85,7 @@ async function getMyApplications(req, res) {
             filter.status = status;
         }
 
-        const applications = await Application.findAll({ where: {...filter, applier: userId} });
+        const applications = await Application.findAll({ where: {...filter, applier: userId}, include: Tournament });
         res.status(200).json({ data: applications });
     } catch (error) {
         res.status(400).json({ message: "Не удалось получить турниры!" });
