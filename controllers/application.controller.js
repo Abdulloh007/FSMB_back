@@ -21,6 +21,11 @@ async function createApplication(req, res) {
         ) {
             return res.status(400).json({ message: "Все поля обязательны!", payload: req.body });
         }
+        const existed = await Application.findOne({ where: { applier: userId, tournamentId: tournamentId }})
+        
+        if (existed) {
+            return res.status(400).json({ message: "Вы уже подали заявку на этот турнир!", payload: req.body });
+        }
 
         if (status && !statusEnum.includes(status)) {
             return res.status(400).json({ message: "Недопустимое значение поля!" });
