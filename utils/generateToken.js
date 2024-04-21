@@ -5,18 +5,7 @@ require("dotenv").config();
 
 async function generateToken(user) {
   try {
-    const userRoles = await UserRole.findAll({
-      where: { userId: user.id },
-    });
-
-    if (!userRoles || userRoles.length === 0) {
-      throw new Error("User roles not found");
-    }
-    const roles = userRoles.map((userRole) => userRole.roles);
-    const anthropometryData = await Anthropometry.findOne({
-      where: { userId: user.id },
-    });
-
+    // const roles = user.user_roles.map((userRole) => userRole.roles);
     const token = jwt.sign(
       {
         id: user.id,
@@ -27,12 +16,12 @@ async function generateToken(user) {
         email: user.email,
         photo: user.photo,
         age: user.age,
-        anthropometry: anthropometryData ? anthropometryData : {},
+        anthropometry: user.anthropometry,
         coach: user.coach,
         city: user.city,
         gender: user.gender,
-        rating: user.rating,
-        roles: roles.flat(),
+        rating: user.rating
+        // roles: roles.flat()
       },
       process.env.JWT_SECRET,
       { algorithm: "HS256", expiresIn: "90d" }

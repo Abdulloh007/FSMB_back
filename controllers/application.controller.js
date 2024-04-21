@@ -1,12 +1,11 @@
-const {Tournament} = require("../models/tournament.model");
-const League = require("../models/league.model");
-const User = require("../models/user.model");
-const {Application} = require("../models/tournament.model");
-const GenderEnum = {
-    MALE: "male",
-    FEMALE: "female",
-};
-const statusEnum = ["pending", "approved", "rejected"]
+const { Tournament } = require("../models/index.model");
+const { Application } = require("../models/index.model");
+
+const statusEnum = [
+    "pending", 
+    "approved", 
+    "rejected"
+]
 
 async function createApplication(req, res) {
     try {

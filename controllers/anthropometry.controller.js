@@ -1,4 +1,4 @@
-const Anthropometry = require("../models/anthropometry.model");
+const {Anthropometry} = require("../models/index.model");
 
 async function createAnthropometry(req, res) {
   try {

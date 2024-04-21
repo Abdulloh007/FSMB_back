@@ -1,4 +1,3 @@
-const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
 
 const UserRoleEnum = [
@@ -11,7 +10,7 @@ const UserRoleEnum = [
   "parent",
 ];
 
-const UserRole = sequelize.define("user_roles", {
+const UserRoleModel = {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -27,6 +26,6 @@ const UserRole = sequelize.define("user_roles", {
     defaultValue: "guest",
     allowNull: false,
   },
-});
+}
 
-module.exports = UserRole;
+module.exports = UserRoleModel;

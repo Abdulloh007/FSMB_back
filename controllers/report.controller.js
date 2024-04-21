@@ -1,4 +1,4 @@
-const Report = require("../models/report.model");
+const { Report } = require("../models/index.model");
 
 async function getReports(req, res) {
   try {

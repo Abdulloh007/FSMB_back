@@ -1,13 +1,14 @@
 const { Op } = require("sequelize");
-const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
-const UserRole = require("../models/role.model");
-const Anthropometry = require("../models/anthropometry.model");
-const Family = require("../models/family.model");
 const checkAuth = require("../utils/checkAuth");
 const jwt = require("jsonwebtoken");
-const Club = require("../models/club.model");
+
+const { User } = require("../models/index.model");
+const { UserRole } = require("../models/index.model");
+const { Anthropometry } = require("../models/index.model");
+const { Club } = require("../models/index.model");
+const { relationship } = require("../models/relative.model");
 
 const UserRoleEnum = [
   "admin",
@@ -75,7 +76,7 @@ async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email }, include: [UserRole, Anthropometry] });
     if (!user) {
       return res.status(404).json({ error: "Пользователь не найден" });
     }
@@ -128,27 +129,28 @@ async function getMe(req, res) {
   try {
     const user = req.user;
 
-    const userData = await User.findOne({ where: { id: user.id } });
-    const userRole = await UserRole.findAll({ where: { userId: user.id } });
-    const anthropometryData = await Anthropometry.findOne({ where: { userId: user.id } });
-    const families = await Family.findAll({
-      where: {
-        [Op.or]: [{ userId1: user.id }, { userId2: user.id }]
-      }
-    });
-    const userClub = await Club.findByPk(user.club)
+    const userData = await User.findOne({ where: { id: user.id }, include: [UserRole, Anthropometry, Club]});
 
     delete userData.dataValues["password"]
-    if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
-    const familyMembers = []
-    families.map(item => {
-      return familyMembers.push({ member: (item.userId1 === user.id ? item.userId2 : item.userId1), relation: item.relationship })
+
+    let relatives = await userData.getRelative();
+
+    relatives = relatives.map(relative => {
+      return {
+        id: relative.dataValues.id,
+        name: relative.dataValues.name,
+        surname: relative.dataValues.surname,
+        relationship: relative.dataValues.relatives.relationship,
+        photo: relative.dataValues.photo ? relative.dataValues.photo : 'default_avatar.png'
+      }
     })
 
-    res.status(200).json({ ...userData.dataValues, roles: userRole, anthropometry: anthropometryData, family: familyMembers, club: userClub });
+    if (userData.dataValues.photo === null) userData.dataValues.photo = 'default_avatar.png'
+
+    res.status(200).json({...userData.dataValues, relatives});
 
   } catch (error) {
-    res.status(409).json({ error: error })
+    res.status(409).json({ error: error.message })
   }
 }
 
@@ -169,7 +171,8 @@ async function getAllSportsmens(req, res) {
         city: sportsman.city,
         age: sportsman.age,
         club: sportsman.club,
-        rate: sportsman.rating
+        rate: sportsman.rating,
+        photo: sportsman.photo
       })
     })
 
@@ -212,12 +215,13 @@ async function deleteProfile(req, res) {
 async function editProfile(req, res) {
   try {
     const user = req.user;
-    const { name, surname, patronymic, city, gender, address, phone, email, birth } = req.body;
+    const { name, surname, patronymic, city, gender, address, phone, email, birth, photo } = req.body;
 
     const age = (new Date() - new Date(birth)) / 1000 / 60 / 60 / 24 / 365;
 
     await User.update(
       {
+        photo,
         age,
         name,
         surname,
@@ -230,7 +234,7 @@ async function editProfile(req, res) {
         email,
         birth
       },
-      { where: { id: user.id } }
+      { where: { id: user.id }, include: [UserRole, Anthropometry, Club] }
     );
 
     user.name = name;
@@ -324,6 +328,37 @@ async function searchUser(req, res) {
   }
 }
 
+async function removeAvatar(req, res) {
+  try {
+    const user = req.user
+
+    await User.update(
+      {
+        photo: null
+      },
+      { where: { id: user.id } 
+    });
+
+    res.status(200).json({ filename: 'default_avatar.png' });
+
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+async function addRelative(req, res) {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    const relative = await user.addRelative(req.body.relative, {through: {relationship: req.body.relationship}});
+
+    res.status(200).json(relative);
+
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 
 module.exports = {
   createUser,
@@ -335,5 +370,7 @@ module.exports = {
   editProfile,
   changeUserRole,
   searchUser,
-  getAllSportsmens
+  getAllSportsmens,
+  removeAvatar,
+  addRelative
 };

@@ -1,7 +1,6 @@
-const { sequelize } = require("../sequelize.db");
 const { DataTypes } = require("sequelize");
 
-const Tournament = sequelize.define("tournaments", {
+const TournamentModel = {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -102,33 +101,6 @@ const Tournament = sequelize.define("tournaments", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-});
+}
 
-
-
-
-const Application = sequelize.define("applications", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    autoIncrement: true,
-  },
-  applier: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  // tournamentId: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
-  status: {
-    type: DataTypes.ENUM("pending", "approved", "rejected"),
-    allowNull: false,
-    defaultValue: "pending",
-  },
-});
-
-Tournament.hasMany(Application);
-Application.belongsTo(Tournament);
-module.exports = {Tournament, Application};
+module.exports = TournamentModel;

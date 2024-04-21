@@ -1,13 +1,11 @@
 const { Op } = require("sequelize");
-const Club = require("../models/club.model");
-const User = require("../models/user.model");
-const League = require("../models/league.model");
+const { Club } = require("../models/index.model");
+const { User } = require("../models/index.model");
+const { League } = require("../models/index.model");
 
 async function getClubs(req, res) {
   try {
-    const clubs = await Club.findAll();
-
-    
+    const clubs = await Club.findAll({include: 'owner'});
 
     res.status(200).json({ clubs });
   } catch (error) {
@@ -23,7 +21,9 @@ async function getClubById(req, res) {
         id: clubId,
       },
     });
-    res.status(200).json({ club });
+    const clubMembers = await club.getUsers();
+
+    res.status(200).json({ club, clubMembers });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -32,7 +32,7 @@ async function getClubById(req, res) {
 async function newClub(req, res) {
   try {
     const user = req.user;
-    const { name, city, address, phone, email, description, league } = req.body;
+    const { name, city, address, phone, email, description } = req.body;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -47,10 +47,6 @@ async function newClub(req, res) {
         .json({ error: "Некорректный формат номера телефона" });
     }
 
-    if (league.lenght <= 0) {
-      return res.status(400).json({ error: "Недопустимое значение лиги!" });
-    }
-
     const newClub = await Club.create({
       name,
       city,
@@ -58,9 +54,10 @@ async function newClub(req, res) {
       description,
       phone,
       email,
-      league,
-      owner: user.id,
+      ownerId: user.id,
+      // userId: user.id,
     });
+
     res.status(200).json({ club: newClub, msg: "Клуб успешно создан" });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -69,7 +66,7 @@ async function newClub(req, res) {
 
 async function getAllClubs(req, res) {
   try {
-    const { city, name, membersAge, league } = req.query;
+    const { city, name, membersAge } = req.query;
     let filter = {};
 
     if (city) {
@@ -81,9 +78,6 @@ async function getAllClubs(req, res) {
     }
     if (membersAge) {
       filter.membersAge = membersAge;
-    }
-    if (league) {
-      filter.league = league;
     }
 
     const clubs = await Club.findAll({ where: filter });
@@ -118,7 +112,7 @@ async function deleteClub(req, res) {
 async function editClub(req, res) {
   try {
     const clubId = req.params.id;
-    const { name, city, address, phone, email, description, league } =
+    const { name, city, address, phone, email, description } =
       req.body;
     const club = await Club.findByPk(clubId);
 
@@ -126,7 +120,7 @@ async function editClub(req, res) {
       return res.status(404).json({ error: "Клуб не найден" });
     }
 
-    if (req.user.id !== club.owner) {
+    if (req.user.id !== club.ownerId) {
       return res
         .status(403)
         .json({ error: "Недостаточно прав для редактирования клуба" });
@@ -138,7 +132,6 @@ async function editClub(req, res) {
     club.phone = phone;
     club.email = email;
     club.description = description;
-    club.league = league;
 
     await club.save();
 
@@ -159,7 +152,7 @@ async function enterToClub(req, res) {
       throw new Error("Пользователь не найден");
     }
 
-    user.club = clubId;
+    user.clubId = clubId;
 
     await user.save();
 

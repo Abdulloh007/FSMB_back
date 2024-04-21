@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const League = require('../models/league.model');
+const { League } = require('../models/index.model');
 
 async function createLeague(req, res) {
     try {

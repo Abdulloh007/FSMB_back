@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
-const Family = require("../models/family.model");
-const User = require("../models/user.model");
+const { Family } = require("../models/index.model");
+const { User } = require("../models/index.model");
 
 const RelationshipType = {
   SPOUSE: "супруг(а)",

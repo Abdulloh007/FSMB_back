@@ -2,6 +2,7 @@ const express = require("express");
 const conf = require("./config/conf");
 const cors = require('cors');
 const routes = require("./routes/index");
+const DBModel = require("./models/index.model");
 
 const port = conf.server.port || 3000;
 const host = conf.server.host || "localhost";

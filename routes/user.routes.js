@@ -18,6 +18,7 @@ const upload = multer({ storage });
 
 router.post("/register", UserController.createUser);
 router.post("/login", UserController.loginUser);
+router.post("/add-relative", checkAuth, UserController.addRelative);
 router.post("/uploadAvatar", upload.single('file'), UserController.uploadUserPhoto)
 router.get("/me", checkAuth, UserController.getMe);
 router.get("/user/:id", checkAuth, UserController.getById);
@@ -25,6 +26,7 @@ router.get("/user-sprotsmens", checkAuth, UserController.getAllSportsmens);
 router.get("/s_user/:name", checkAuth, UserController.searchUser);
 router.delete("/profile", checkAuth, UserController.deleteProfile);
 router.put("/profile/edit", checkAuth, UserController.editProfile);
+router.put("/profile/remove-avatar", checkAuth, UserController.removeAvatar);
 
 router.post("/user/changeRole", checkAuth, UserController.changeUserRole);
 module.exports = router;
