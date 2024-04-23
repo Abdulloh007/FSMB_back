@@ -1,11 +1,11 @@
 const { Op } = require("sequelize");
-const { Club } = require("../models/index.model");
+const { Club, Nominations } = require("../models/index.model");
 const { User } = require("../models/index.model");
 const { League } = require("../models/index.model");
 
 async function getClubs(req, res) {
   try {
-    const clubs = await Club.findAll({include: 'owner'});
+    const clubs = await Club.findAll({include: [League, Nominations, 'owner']});
 
     res.status(200).json({ clubs });
   } catch (error) {
@@ -191,6 +191,60 @@ async function leaveClub(req, res) {
   }
 }
 
+async function setNomination(req, res) {
+  try {
+    const user = req.user;
+
+    const clubId = req.params.id;
+    const {nominationId} = req.body;
+    
+    const club = await Club.findByPk(clubId)
+    
+    if (!club) {
+      return res.status(404).json({ error: "Клуб не найден" });
+    }
+
+    if (req.user.id !== club.ownerId) {
+      return res
+        .status(403)
+        .json({ error: "Недостаточно прав для редактирования клуба" });
+    }
+
+    await club.addNomination(nominationId)
+
+    res.status(200).json(club);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+async function setLeague(req, res) {
+  try {
+    const user = req.user;
+
+    const clubId = req.params.id;
+    const {leagueId} = req.body;
+
+    const club = await Club.findByPk(clubId)
+
+    if (!club) {
+      return res.status(404).json({ error: "Клуб не найден" });
+    }
+
+    if (req.user.id !== club.ownerId) {
+      return res
+        .status(403)
+        .json({ error: "Недостаточно прав для редактирования клуба" });
+    }
+
+    await club.addLeague(leagueId)
+
+    res.status(200).json(club);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 module.exports = {
   getClubs,
   getClubById,
@@ -200,4 +254,6 @@ module.exports = {
   deleteClub,
   enterToClub,
   leaveClub,
+  setNomination,
+  setLeague
 };

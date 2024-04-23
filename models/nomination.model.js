@@ -12,10 +12,27 @@ const NominationsModel = {
         allowNull: false,
     },
     membersTitle: {
-        type: DataTypes.ENUM("Мужчины", "Женщины", "Мальчики", "Девочки", "Юноши", "Девушки", "Юниоры", "Юниорки", "без разделения по полу и лиге"),
-        allowNull: false,
-        set() {
-
+        type: DataTypes.VIRTUAL,
+        get() {
+            if (this.getDataValue("ageTo") <= 5 && this.getDataValue("gender") === "male") {
+                return "Мальчики"
+            } else if (this.getDataValue("ageTo") <= 5 && this.getDataValue("gender") === "female") {
+                return "Девочки"
+            } else if (this.getDataValue("ageTo") <= 13 && this.getDataValue("gender") === "male") {
+                return "Юноши"
+            } else if (this.getDataValue("ageTo") <= 13 && this.getDataValue("gender") === "female") {
+                return "Девушки"
+            } else if (this.getDataValue("ageTo") <= 17 && this.getDataValue("gender") === "male") {
+                return "Юниоры"
+            } else if (this.getDataValue("ageTo") <= 17 && this.getDataValue("gender") === "female") {
+                return "Юниорки"
+            } else if (this.getDataValue("ageTo") > 17 && this.getDataValue("gender") === "male") {
+                return "Мужчины"
+            } else if (this.getDataValue("ageTo") > 17 && this.getDataValue("gender") === "female") {
+                return "Женщины"
+            } else {
+                return "без разделения по полу"
+            }
         }
     },
     type: {

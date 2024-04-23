@@ -15,10 +15,6 @@ const LeagueModel = {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    weightCat: {
-        type: DataTypes.ENUM('light, heavy'),
-        allowNull: true
-    }
 }
 
 module.exports = LeagueModel
