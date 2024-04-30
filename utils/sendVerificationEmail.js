@@ -18,3 +18,5 @@ async function sendVerificationEmail(email, verificationCode) {
     console.error('Error sending email:', error);
   }
 }
+
+module.exports = sendVerificationEmail

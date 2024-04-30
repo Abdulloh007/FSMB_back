@@ -1,11 +1,11 @@
 const { Op } = require("sequelize");
-const { Club, Nominations } = require("../models/index.model");
+const { Club, Nominations, ClubMembers } = require("../models/index.model");
 const { User } = require("../models/index.model");
 const { League } = require("../models/index.model");
 
 async function getClubs(req, res) {
   try {
-    const clubs = await Club.findAll({include: [League, Nominations, 'owner']});
+    const clubs = await Club.findAll({ include: [League, Nominations, 'owner'] });
 
     res.status(200).json({ clubs });
   } catch (error) {
@@ -20,10 +20,62 @@ async function getClubById(req, res) {
       where: {
         id: clubId,
       },
+      include: ["owner"]
     });
-    const clubMembers = await club.getUsers();
 
-    res.status(200).json({ club, clubMembers });
+    const users = await club.getUsers()
+    const clubMembers = await club.getClubsMembers()
+
+    let sportsmans = clubMembers.map((item) => {
+      let clUser = users.find((it) => it.id === item.userId)
+      return {
+        id: clUser.id,
+        full_name: `${clUser.surname} ${clUser.name} ${clUser.patronymic}`,
+        birth: clUser.birth,
+        status: item.status,
+        role: item.role
+      }
+    })
+
+    res.status(200).json({ club, members: sportsmans });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+async function getMyClub(req, res) {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId)
+
+    const club = await Club.findOne({
+      where: {
+        id: user.clubId,
+      },
+      include: ["owner"]
+    });
+
+    const users = await club.getUsers()
+    const clubMembers = await club.getClubsMembers()
+
+    let sportsmans = clubMembers.map((item) => {
+      let clUser = users.find((it) => it.id === item.userId)
+      return {
+        id: clUser.id,
+        full_name: `${clUser.surname} ${clUser.name} ${clUser.patronymic}`,
+        birth: clUser.birth,
+        status: item.status === 'pending' ? 'Заявка' : item.status === 'approved' ? 'Утвержден' : item.status === 'rejected' ? 'Откланён' : '',
+        role: 
+        item.role === 'leader'   ? 'Глава' 
+        : item.role === 'casher'   ? 'Козначей' 
+        : item.role === 'couch'   ? 'Тренер' 
+        : item.role === 'secretary'   ? 'Секретарь' 
+        : item.role === 'sportsman'   ? 'Спортсмен' : "" 
+        
+      }
+    })
+
+    res.status(200).json({ club, members: sportsmans });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -156,6 +208,12 @@ async function enterToClub(req, res) {
 
     await user.save();
 
+    await ClubMembers.create({
+      role: "sportsman",
+      clubId: clubId,
+      userId: userId
+    })
+
     res.status(200).json({ message: "Пользователь успешно вступил в клуб" });
   } catch (error) {
     console.log(error);
@@ -196,10 +254,10 @@ async function setNomination(req, res) {
     const user = req.user;
 
     const clubId = req.params.id;
-    const {nominationId} = req.body;
-    
+    const { nominationId } = req.body;
+
     const club = await Club.findByPk(clubId)
-    
+
     if (!club) {
       return res.status(404).json({ error: "Клуб не найден" });
     }
@@ -223,7 +281,7 @@ async function setLeague(req, res) {
     const user = req.user;
 
     const clubId = req.params.id;
-    const {leagueId} = req.body;
+    const { leagueId } = req.body;
 
     const club = await Club.findByPk(clubId)
 
@@ -255,5 +313,6 @@ module.exports = {
   enterToClub,
   leaveClub,
   setNomination,
-  setLeague
+  setLeague,
+  getMyClub
 };

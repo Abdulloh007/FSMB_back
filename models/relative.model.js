@@ -22,6 +22,11 @@ const RelativeModel = {
     type: DataTypes.ENUM(RelationshipType),
     allowNull: false,
   },
+  status: {
+    type: DataTypes.ENUM("pending", "approved", "rejected"),
+    allowNull: false,
+    defaultValue: "pending",
+  }
 }
 
 module.exports = RelativeModel;

@@ -4,6 +4,7 @@ const clubController = require("../controllers/club.controller");
 const checkAuth = require("../utils/checkAuth");
 
 router.get("/clubs", checkAuth, clubController.getClubs);
+router.get("/my-club", checkAuth, clubController.getMyClub);
 router.get("/club/:id", checkAuth, clubController.getClubById);
 router.post("/clubs/new", checkAuth, clubController.newClub);
 router.delete("/club/:id", checkAuth, clubController.deleteClub);

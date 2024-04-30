@@ -4,7 +4,7 @@ const generateToken = require("../utils/generateToken");
 const checkAuth = require("../utils/checkAuth");
 const jwt = require("jsonwebtoken");
 
-const { User } = require("../models/index.model");
+const { User, League } = require("../models/index.model");
 const { UserRole } = require("../models/index.model");
 const { Anthropometry } = require("../models/index.model");
 const { Club } = require("../models/index.model");
@@ -129,7 +129,7 @@ async function getMe(req, res) {
   try {
     const user = req.user;
 
-    const userData = await User.findOne({ where: { id: user.id }, include: [UserRole, Anthropometry, Club]});
+    const userData = await User.findOne({ where: { id: user.id }, include: [UserRole, Anthropometry, Club, League]});
 
     delete userData.dataValues["password"]
 
@@ -215,7 +215,7 @@ async function deleteProfile(req, res) {
 async function editProfile(req, res) {
   try {
     const user = req.user;
-    const { name, surname, patronymic, city, gender, address, phone, email, birth, photo } = req.body;
+    const { name, surname, patronymic, city, gender, address, phone, email, birth, photo, league } = req.body;
 
     const age = (new Date() - new Date(birth)) / 1000 / 60 / 60 / 24 / 365;
 
@@ -232,9 +232,10 @@ async function editProfile(req, res) {
         address,
         phone,
         email,
-        birth
+        birth,
+        leagueId: league
       },
-      { where: { id: user.id }, include: [UserRole, Anthropometry, Club] }
+      { where: { id: user.id }, include: [UserRole, Anthropometry, Club, League] }
     );
 
     user.name = name;

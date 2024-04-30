@@ -7,10 +7,6 @@ const NominationsModel = {
         primaryKey: true,
         allowNull: false,
     },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     membersTitle: {
         type: DataTypes.VIRTUAL,
         get() {

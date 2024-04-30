@@ -37,7 +37,7 @@ async function getAllLeagues(req, res) {
         if (parent) filter.parent = parent;
         if (weightCat) filter.weightCat = weightCat;
 
-        const leagues = League.findAll({ where: filter });
+        const leagues = await League.findAll({ where: filter });
         res.status(200).json({ data: leagues });
     } catch (error) {
         console.log(error);

@@ -1,10 +1,10 @@
 const { DataTypes } = require("sequelize");
 
-const LeagueModel = {
+const NominationsTypeModel = {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
         allowNull: false,
     },
     name: {
@@ -13,4 +13,4 @@ const LeagueModel = {
     }
 }
 
-module.exports = LeagueModel
+module.exports = NominationsTypeModel

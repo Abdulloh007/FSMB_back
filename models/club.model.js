@@ -29,10 +29,9 @@ const ClubModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  // ownerId: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
+  logo: {
+    type: DataTypes.STRING,
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -41,20 +40,6 @@ const ClubModel = {
     type: DataTypes.ENUM("children", "adults", "teenagers"),
     allowNull: true,
   },
-  // league: {
-  //   type: DataTypes.STRING,
-  //   allowNull: true,
-  //   get() {
-  //     const rawValue = this.getDataValue('league');
-  //     if (rawValue !== null) return rawValue.split('; ').map(id => parseInt(id))
-  //     return null
-  //   },
-  //   set(value) {
-  //     let newRawValue = ''
-  //     value.map((val, idx) => idx + 1 !== value.length ? newRawValue += val + '; ' : newRawValue += val)
-  //     this.setDataValue('league', newRawValue)
-  //   }
-  // },
   accreditation: {
     type: DataTypes.BOOLEAN,
   },
