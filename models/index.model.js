@@ -56,6 +56,7 @@ League.belongsToMany(Club, { through: 'LeagueClub' })
 League.belongsTo(League, { as : "parent" })
 Club.belongsToMany(Nominations, { through: 'NominationsClub' })
 Nominations.belongsToMany(Club, { through: 'NominationsClub' })
+Nominations.belongsToMany(League, { through: 'NominationsLeague' })
 Nominations.belongsTo(NominationsType, {as: 'title'})
 
 // User.hasMany(Achivments)
@@ -67,11 +68,14 @@ ClubMembers.belongsTo(User)
 Tournament.hasMany(Application);
 Application.belongsTo(Tournament);
 
+Tournament.belongsTo(User, { as: "owner" })
+Tournament.belongsToMany(User, { through: "TournamentsSecretaries" })
+
 Tournament.hasMany(Battle)
 Battle.belongsTo(Tournament)
 
-Battle.belongsToMany(User, {as: "fighter_blue", through: "BlueFighter"})
-Battle.belongsToMany(User, {as: "fighter_red", through: "RedFighter"})
+Battle.belongsToMany(User, { through: "FighterBlue" })
+Battle.belongsToMany(User, { through: "FighterRed" })
 
 module.exports = {
     Anthropometry,

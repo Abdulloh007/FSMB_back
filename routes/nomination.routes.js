@@ -9,4 +9,7 @@ router.post("/nominations/new", checkAuth, nominationController.newNomination);
 router.delete("/nomination/:id", checkAuth, nominationController.deleteNomination);
 router.put("/nomination/:id", checkAuth, nominationController.editNomination);
 
+router.get("/nomination-type", checkAuth, nominationController.getAllNominationsTypes);
+router.post("/nomination-type", checkAuth, nominationController.newNominationType);
+
 module.exports = router;

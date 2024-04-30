@@ -22,13 +22,8 @@ async function createTournament(req, res) {
       dateTo,
       applicationDeadline,
       price,
-      gender,
       nomination,
-      ageFrom,
-      ageTo,
-      league,
       secretary,
-      weightCat
     } = req.body;
 
     if (
@@ -41,15 +36,10 @@ async function createTournament(req, res) {
       !dateTo ||
       !applicationDeadline ||
       !price ||
-      !gender ||
-      !league ||
       !nomination ||
-      !ageFrom ||
-      !ageTo ||
-      !secretary ||
-      !weightCat
+      !secretary
     ) {
-      return res.status(400).json({ error: "Все поля обязательны!", payload: req.body});
+      return res.status(400).json({ error: "Все поля обязательны!", payload: req.body });
     }
 
     if (!typeEnum.includes(type)) {
@@ -57,19 +47,6 @@ async function createTournament(req, res) {
     }
     if (!gridViewEnum.includes(gridView)) {
       return res.status(400).json({ error: "Недопустимое значение поля!" });
-    }
-    
-    if (!Object.values(GenderEnum).includes(gender)) {
-      return res.status(400).json({ error: "Недопустимое значение поля!" });
-    }
-    const secretaryUser = await User.findByPk(secretary)
-
-    if (!secretaryUser) {
-      return res.status(400).json({ error: "Недопустимое значение поля!" });
-    }
-
-    if (league === null) {
-      return res.status(400).json({ error: "Недопустимое значение лиги!" });
     }
 
     const newTournament = await Tournament.create({
@@ -82,24 +59,22 @@ async function createTournament(req, res) {
       dateTo,
       applicationDeadline,
       price,
-      gender,
       nomination,
-      ageFrom,
-      ageTo,
-      league,
-      owner: userId,
-      secretary
+      ownerId: userId
     });
+
+    newTournament.addUsers(secretary)
 
     res.status(200).json({ message: "Успешно создано!", data: newTournament });
 
   } catch (error) {
-    
+
     console.log(error);
     res.status(400).json({ error: "Не удалось создать турнир!" });
 
   }
 }
+
 async function getAllTournaments(req, res) {
   try {
     const { city, gender, nomination, ageFrom, ageTo, league, owner } = req.query;
@@ -128,10 +103,22 @@ async function getAllTournaments(req, res) {
     }
 
     if (owner) {
-      filter.owner = owner;
+      filter.ownerId = owner;
     }
 
-    const tournaments = await Tournament.findAll({ where: filter });
+    let tournaments = await Tournament.findAll({ where: filter, include: ["owner"] });
+
+    tournaments = tournaments.map(item => {
+      item.dataValues.owner = {
+        id: item.owner.id,
+        name: item.owner.name,
+        surname: item.owner.surname,
+        patronymic: item.owner.patronymic,
+      }
+      return item
+    })
+
+
     res.status(200).json({ data: tournaments });
   } catch (error) {
     res.status(400).json({ error: "Не удалось получить турниры!" });
@@ -166,7 +153,7 @@ async function getMyTournaments(req, res) {
     }
 
 
-    const tournaments = await Tournament.findAll({ where: {...filter, owner: req.user.id} });
+    const tournaments = await Tournament.findAll({ where: { ...filter, owner: req.user.id } });
     res.status(200).json({ data: tournaments });
   } catch (error) {
     res.status(409).json({ error: "Не удалось получить турниры!" });
@@ -178,7 +165,7 @@ async function updateTournament(req, res) {
     const tournamentId = req.params.id;
     const userId = req.user.id;
     const tournament = await Tournament.findByPk(tournamentId);
-    
+
     if (!tournament) {
       return res.status(404).json({ error: "Турнир не найден!" });
     }
@@ -195,11 +182,7 @@ async function updateTournament(req, res) {
       address,
       date,
       price,
-      gender,
       nomination,
-      ageFrom,
-      ageTo,
-      league,
     } = req.body;
 
     if (
@@ -208,11 +191,7 @@ async function updateTournament(req, res) {
       !address ||
       !date ||
       !price ||
-      !gender ||
-      !league ||
-      !nomination ||
-      !ageFrom ||
-      !ageTo
+      !nomination
     ) {
       return res.status(400).json({ error: "Все поля обязательны!" });
     }

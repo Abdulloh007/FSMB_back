@@ -31,26 +31,6 @@ const TournamentModel = {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  owner: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  gender: {
-    type: DataTypes.ENUM("male", "female"),
-    allowNull: false,
-  },
-  nomination: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  // ageFrom: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
-  // ageTo: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  // },
   dateFrom: {
     type: DataTypes.DATE,
     allowNull: false
@@ -63,24 +43,6 @@ const TournamentModel = {
     type: DataTypes.DATE,
     allowNull: false
   },
-  // league: {
-  //   type: DataTypes.STRING,
-  //   allowNull: true,
-  //   get() {
-  //     const rawValue = this.getDataValue('league');
-  //     if (rawValue !== null) return rawValue.split('; ').map(id => parseInt(id))
-  //     return null
-  //   },
-  //   set(value) {
-  //     let newRawValue = ''
-  //     value.map((val, idx) => idx + 1 !== value.length ? newRawValue += val + '; ' : newRawValue += val)
-  //     this.setDataValue('league', newRawValue)
-  //   }
-  // },
-  // weightCat: {
-  //   type: DataTypes.ENUM('light', 'heavy'),
-  //   allowNull: true
-  // },
   first_place: {
     type: DataTypes.INTEGER,
     allowNull: true,
