@@ -28,6 +28,8 @@ const ClubMembers = sequelize.define("ClubsMembers", ClubMebersModel, { timestam
 const Tournament = sequelize.define("tournaments", TournamentModel, { timestamps: true });
 const Application = sequelize.define("applications", ApplicationModel, { timestamps: true });
 const Battle = sequelize.define("battle", BattleModel, { timestamps: true });
+const FighterRed = sequelize.define("FighterRed");
+const FighterBlue = sequelize.define("FighterBlue");
 const Notification = sequelize.define("notifications", NotificationModel, { timestamps: true });
 const Category = sequelize.define("category", CategoryModel, { timestamps: true });
 const Report = sequelize.define("reports", ReportModel, { timestamps: true });
@@ -70,6 +72,8 @@ Application.belongsTo(Tournament);
 
 Tournament.belongsTo(User, { as: "owner" })
 Tournament.belongsToMany(User, { through: "TournamentsSecretaries" })
+
+Tournament.belongsTo(Nominations)
 
 Tournament.hasMany(Battle)
 Battle.belongsTo(Tournament)

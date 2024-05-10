@@ -21,11 +21,12 @@ sequelize
   });
 
 sequelize
+  // .sync({ alter: false, force: true })
   .sync()
   .then(() => {
     console.log("All tables and models synced!!");
   })
   .catch((err) => {
-    console.log("Error syncing tables and models!!");
+    console.log(err);
   });
 module.exports = { sequelize };

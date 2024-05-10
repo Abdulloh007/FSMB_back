@@ -1,4 +1,4 @@
-const { Tournament } = require("../models/index.model");
+const { Tournament, Nominations, Application } = require("../models/index.model");
 const { League } = require("../models/index.model");
 const { User } = require("../models/index.model");
 
@@ -59,18 +59,19 @@ async function createTournament(req, res) {
       dateTo,
       applicationDeadline,
       price,
-      nomination,
+      nominationId: nomination,
       ownerId: userId
     });
 
     newTournament.addUsers(secretary)
+
 
     res.status(200).json({ message: "Успешно создано!", data: newTournament });
 
   } catch (error) {
 
     console.log(error);
-    res.status(400).json({ error: "Не удалось создать турнир!" });
+    res.status(400).json({ error: error.message });
 
   }
 }
@@ -106,7 +107,7 @@ async function getAllTournaments(req, res) {
       filter.ownerId = owner;
     }
 
-    let tournaments = await Tournament.findAll({ where: filter, include: ["owner"] });
+    let tournaments = await Tournament.findAll({ where: filter, include: ["owner", Nominations, Application] });
 
     tournaments = tournaments.map(item => {
       item.dataValues.owner = {
@@ -121,7 +122,7 @@ async function getAllTournaments(req, res) {
 
     res.status(200).json({ data: tournaments });
   } catch (error) {
-    res.status(400).json({ error: "Не удалось получить турниры!" });
+    res.status(400).json({ error: error.message });
   }
 }
 
@@ -153,10 +154,23 @@ async function getMyTournaments(req, res) {
     }
 
 
-    const tournaments = await Tournament.findAll({ where: { ...filter, owner: req.user.id } });
+    const tournaments = await Tournament.findAll({ where: { ...filter, ownerId: req.user.id }, include: [Nominations] });
     res.status(200).json({ data: tournaments });
   } catch (error) {
-    res.status(409).json({ error: "Не удалось получить турниры!" });
+    res.status(409).json({ error: error.message });
+  }
+}
+
+async function getMyTournaments(req, res) {
+  try {
+    const { t } = req.query;
+    const tournament = await Tournament.findByPk(t, {include: [Application]});
+
+
+
+    res.status(200).json({ data: tournament });
+  } catch (error) {
+    res.status(409).json({ error: error.message });
   }
 }
 
@@ -211,7 +225,7 @@ async function updateTournament(req, res) {
         nomination,
         ageFrom,
         ageTo,
-        league,
+        
       },
       { where: { id: tournamentId } }
     );
