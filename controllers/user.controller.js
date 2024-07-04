@@ -160,7 +160,7 @@ async function getAllSportsmens(req, res) {
     const userData = await User.findAll();
     let sportsmens = []
 
-    userData.map(sportsman => {
+    userData.filter(item => item.id != user.id).map(sportsman => {
       // const userBlub = Club.findByPk(sportsman.club)
       if (sportsman.photo === null) sportsman.photo = 'default_avatar.png'
       sportsmens.push({
