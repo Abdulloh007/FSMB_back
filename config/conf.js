@@ -3,7 +3,7 @@ module.exports = {
     database: {
         host: '127.0.0.1',
         port: 3306,
-        username: 'root',
+        username: 'fsmb',
         password: 'FSMB123qq!',
         database: 'fsmb',
     },
