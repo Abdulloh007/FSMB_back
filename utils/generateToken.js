@@ -23,7 +23,7 @@ async function generateToken(user) {
         rating: user.rating
         // roles: roles.flat()
       },
-      process.env.JWT_SECRET,
+      `${process.env.JWT_SECRET_KEY}`,
       { algorithm: "HS256", expiresIn: "90d" }
     );
 
